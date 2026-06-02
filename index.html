@@ -398,11 +398,11 @@ function renderInternational() {
 }
 
 function pCard(p, full) {
-  var bm = {confirmed:['badge-confirmed','已确认'],pending:['badge-pending','待确认']};
+  var bm = {confirmed:['badge-confirmed','已付款'],pending:['badge-pending','待付款']};
   var bd = bm[p.status]||bm.pending;
   var st = Object.entries(p.sizes||{}).map(function(e){ return '<span class="size-chip">'+e[0]+' × '+e[1]+'</span>'; }).join('');
   var imgs = (p.images&&p.images.length) ? '<div class="card-imgs">'+p.images.map(function(src){ return '<img class="card-img" src="'+src+'" onclick="openLightbox(this.src)">'; }).join('')+'</div>' : '';
-  var act = full ? '<div class="action-row"><button class="action-btn '+(p.status==='confirmed'?'':'primary')+'" onclick="toggleConfirm(\''+p.id+'\')"><i class="ti ti-check"></i>'+(p.status==='confirmed'?'撤销确认':'确认需求')+'</button><button class="action-btn" onclick="openModal(\'purchase\',\''+p.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="action-btn danger" onclick="del(\'purchase\',\''+p.id+'\')"><i class="ti ti-trash"></i>删除</button></div>' : '';
+  var act = full ? '<div class="action-row"><button class="action-btn '+(p.status==='confirmed'?'':'primary')+'" onclick="toggleConfirm(\''+p.id+'\')"><i class="ti ti-check"></i>'+(p.status==='confirmed'?'撤销付款':'确认付款')+'</button><button class="action-btn" onclick="openModal(\'purchase\',\''+p.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="action-btn danger" onclick="del(\'purchase\',\''+p.id+'\')"><i class="ti ti-trash"></i>删除</button></div>' : '';
   var detail = full
     ? '<hr class="divider"><div class="meta-row"><div class="meta-item">颜色<strong>'+(p.color||'—')+'</strong></div><div class="meta-item">总件数<strong>'+p.qty+' 件</strong></div><div class="meta-item">截止<strong>'+p.deadline+'</strong></div></div><div style="margin-top:10px;font-size:12px;color:var(--text3);">尺码分配</div><div class="size-grid">'+st+'</div>'+(p.notes?'<div class="note-box">备注：'+p.notes+'</div>':'')+imgs
     : '<div class="meta-row" style="margin-top:8px"><div class="meta-item">截止 <strong>'+p.deadline+'</strong></div><div class="meta-item">共 <strong>'+p.qty+' 件</strong></div></div>';
@@ -439,8 +439,41 @@ function intlCard(i, full) {
 function toggleConfirm(id) {
   var p = data.purchase.find(function(x){ return x.id===id; });
   if (!p) return;
-  p.status = p.status==='confirmed'?'pending':'confirmed';
-  persist('purchase', p);
+  if (p.status === 'confirmed') {
+    p.status = 'pending';
+    persist('purchase', p);
+  } else {
+    p.status = 'confirmed';
+    persist('purchase', p);
+    var exists = data.domestic.find(function(d){ return d.ref === p.id; });
+    if (!exists) {
+      var nd = {
+        id: 'D'+String(data.domestic.length+1).padStart(3,'0'),
+        ref: p.id,
+        supplier: p.supplier,
+        station: '',
+        pickupCode: '',
+        arrivalDate: '',
+        expectedPcs: p.qty,
+        actualPcs: null,
+        status: 'pending',
+        notes: '由采购 '+p.id+' 自动创建'
+      };
+      data.domestic.push(nd);
+      persist('domestic', nd);
+      toast('采购已确认，国内发货记录已自动创建 ↓');
+      setTimeout(function(){
+        document.querySelectorAll('.nav-item').forEach(function(b){ b.classList.remove('active'); });
+        document.querySelectorAll('.page').forEach(function(t){ t.classList.remove('active'); });
+        document.getElementById('page-domestic').classList.add('active');
+        document.querySelectorAll('.nav-item')[2].classList.add('active');
+        renderAll();
+      }, 1200);
+      return;
+    } else {
+      toast('采购已确认');
+    }
+  }
 }
 function markOk(id) {
   var d = data.domestic.find(function(x){ return x.id===id; });
@@ -482,7 +515,7 @@ function openModal(type, editId) {
     var sz = e.sizes ? Object.entries(e.sizes).map(function(kv){ return kv[0]+':'+kv[1]; }).join(',') : '';
     html = '<div class="form-group"><label class="form-label">产品名称 *</label><input id="f-product" type="text" value="'+(e.product||'')+'"></div>'
       +'<div class="form-row"><div class="form-group"><label class="form-label">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="form-group"><label class="form-label">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">尺码分配（S:5,M:8,L:6）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'
+      +'<div class="form-group"><label class="form-label">尺码分配（S:5,M:8,L:6，可不填）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'+'<div class="form-group"><label class="form-label">总数量（不按尺码分配时直接填）</label><input id="f-qty" type="number" placeholder="如：10" value="'+(e.directQty||'')+'"></div>'
       +'<div class="form-row"><div class="form-group"><label class="form-label">颜色</label><input id="f-color" type="text" value="'+(e.color||'')+'"></div><div class="form-group"><label class="form-label">截止日期</label><input id="f-deadline" type="date" value="'+(e.deadline||'')+'"></div></div>'
       +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>'
       +'<div class="form-group"><label class="form-label">商品图片</label><div class="img-upload-box" onclick="document.getElementById(\'f-img-input\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-img-input" type="file" accept="image/*" multiple style="display:none" onchange="handleImgUpload(this)"><div class="img-preview-grid" id="img-preview-grid">'+buildImgPreviews(modalImages)+'</div></div>';
@@ -542,13 +575,14 @@ function saveModal() {
   if (type==='purchase') {
     var sz=g('f-sizes'), sizes={};
     sz.split(',').forEach(function(s){ var p=s.split(':'); if(p[0]&&p[1]) sizes[p[0].trim()]=parseInt(p[1])||0; });
-    var qty=Object.values(sizes).reduce(function(a,b){return a+b;},0);
+    var directQty=parseInt(g('f-qty'))||0;
+var qty=Object.values(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):(directQty||0);
     if (editId) {
       var p=data.purchase.find(function(x){return x.id===editId;});
-      Object.assign(p,{product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,deadline:g('f-deadline'),notes:g('f-notes'),images:modalImages.slice()});
+      Object.assign(p,{product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),notes:g('f-notes'),images:modalImages.slice()});
       persist('purchase',p);
     } else {
-      var np={id:'P'+String(data.purchase.length+1).padStart(3,'0'),product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,deadline:g('f-deadline'),status:'pending',notes:g('f-notes'),images:modalImages.slice()};
+      var np={id:'P'+String(data.purchase.length+1).padStart(3,'0'),product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),status:'pending',notes:g('f-notes'),images:modalImages.slice()};
       data.purchase.push(np); persist('purchase',np);
     }
   } else if (type==='domestic') {
