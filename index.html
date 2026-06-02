@@ -265,11 +265,25 @@ function fetchCloud() {
   .then(function(r){ return r.json(); })
   .then(function(res) {
     if (res.record && res.record.purchase) {
-      data = res.record;
-      saveLocal(); renderAll();
-      setSyncStatus('ok', '已同步');
+      var cloudTotal = (res.record.purchase||[]).length + (res.record.domestic||[]).length + (res.record.international||[]).length;
+      var localTotal = data.purchase.length + data.domestic.length + data.international.length;
+      if (cloudTotal === 0 && localTotal > 0) {
+        // Cloud is empty but local has data — push local up to cloud
+        pushCloud();
+        setSyncStatus('ok', '已同步');
+      } else if (cloudTotal > 0) {
+        // Cloud has data — use cloud
+        data = res.record;
+        saveLocal(); renderAll();
+        setSyncStatus('ok', '已同步');
+      } else {
+        setSyncStatus('ok', '已同步');
+      }
     } else {
-      pushCloud();
+      if (data.purchase.length > 0 || data.domestic.length > 0 || data.international.length > 0) {
+        pushCloud();
+      }
+      setSyncStatus('ok', '已同步');
     }
   })
   .catch(function(e){ setSyncStatus('err', '读取失败'); });
