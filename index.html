@@ -167,16 +167,6 @@ body { font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="login-overlay" id="login-overlay">
-  <div class="login-box">
-    <div class="login-logo"><div class="login-logo-dot"></div>Runa Vasto</div>
-    <div class="login-title">访问系统</div>
-    <div class="login-sub">请输入访问密码</div>
-    <input class="login-input" id="login-pwd" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">进入</button>
-    <div class="login-error" id="login-error"></div>
-  </div>
-</div>
 
 <div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lightbox-img" src=""></div>
 
@@ -276,27 +266,6 @@ var useCloud = false;
 var fbUnsubs = [];
 var currentModal = null;
 
-
-// ── Login ──────────────────────────────────────────────────────
-var LOGIN_KEY = 'runa_vasto_auth';
-var CORRECT_PWD = 'Hu138168';
-
-function checkLogin() {
-  return sessionStorage.getItem(LOGIN_KEY) === 'ok';
-}
-
-function doLogin() {
-  var pwd = document.getElementById('login-pwd').value;
-  if (pwd === CORRECT_PWD) {
-    sessionStorage.setItem(LOGIN_KEY, 'ok');
-    document.getElementById('login-overlay').style.display = 'none';
-    appInit();
-  } else {
-    document.getElementById('login-error').textContent = '密码错误，请重试';
-    document.getElementById('login-pwd').value = '';
-    document.getElementById('login-pwd').focus();
-  }
-}
 
 // ── Local storage ──────────────────────────────────────────────
 function loadLocal() {
@@ -415,7 +384,7 @@ function reconfigure() {
 }
 
 // ── Init ───────────────────────────────────────────────────────
-function appInit() {
+(function init() {
   var saved = localStorage.getItem(LS_FB);
   if (saved) {
     loadLocal(); renderAll();
@@ -424,7 +393,7 @@ function appInit() {
   } else {
     document.getElementById('setup-overlay').style.display = 'flex';
   }
-}
+})();
 
 // ── Nav ────────────────────────────────────────────────────────
 function switchPage(p, el) {
@@ -700,11 +669,6 @@ function saveModal() {
 }
 
 
-// ── Startup ────────────────────────────────────────────────────
-if (checkLogin()) {
-  document.getElementById('login-overlay').style.display = 'none';
-  appInit();
-}
 // ── Export / Import ────────────────────────────────────────────
 function exportData() {
   var blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
