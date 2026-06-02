@@ -114,6 +114,46 @@ body { font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif
 .setup-steps a { color: var(--accent); }
 .toast { position: fixed; bottom: 24px; right: 24px; background: #1a1a18; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 400; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateY(0); }
+
+.finance-block { margin-top: 12px; background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
+.finance-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.finance-item { font-size: 12px; color: var(--text2); }
+.finance-item strong { color: var(--text); font-weight: 500; display: block; margin-top: 2px; font-size: 14px; }
+.finance-item .sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.profit-bar { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.profit-label { font-size: 12px; color: var(--text2); }
+.profit-value { font-size: 16px; font-weight: 600; }
+.profit-value.pos { color: var(--accent); }
+.profit-value.neg { color: #c0392b; }
+.pay-status { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; margin-left: 6px; }
+.pay-status.paid { background: #eaf3de; color: #27500a; }
+.pay-status.unpaid { background: #faeeda; color: #633806; }
+.pay-status.partial { background: #e6f1fb; color: #0c447c; }
+.rate-tag { font-size: 10px; color: var(--text3); }
+.receipt-imgs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.receipt-img { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; border: 0.5px solid var(--border); cursor: pointer; }
+
+
+.supplier-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 10px; }
+.supplier-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.supplier-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; flex-shrink: 0; margin-right: 12px; }
+.supplier-name-row { display: flex; align-items: center; gap: 8px; }
+.supplier-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; }
+.tag:hover { border-color: var(--accent); color: var(--accent); }
+.tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
+.tag-input-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+.tag-input { padding: 3px 8px; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: 6px; font-size: 12px; color: var(--text); outline: none; width: 100px; font-family: inherit; }
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); gap: 8px; margin-top: 10px; }
+.product-item { border: 0.5px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.product-item img { width: 100%; height: 80px; object-fit: cover; cursor: pointer; }
+.product-item-info { padding: 5px 7px; }
+.product-item-name { font-size: 11px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-item-price { font-size: 11px; color: var(--accent); margin-top: 1px; }
+.supplier-contact { font-size: 12px; color: var(--text2); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.supplier-contact a { color: var(--accent); text-decoration: none; }
+
 .card-imgs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .card-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 0.5px solid var(--border); cursor: pointer; }
 .img-upload-box { margin-top: 10px; border: 1.5px dashed var(--border2); border-radius: 8px; padding: 14px; text-align: center; cursor: pointer; color: var(--text3); font-size: 12px; }
@@ -161,6 +201,7 @@ body { font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif
     <button class="nav-item" onclick="switchPage('purchase',this)"><i class="ti ti-shirt"></i>采购需求</button>
     <button class="nav-item" onclick="switchPage('domestic',this)"><i class="ti ti-building-store"></i>国内发货</button>
     <button class="nav-item" onclick="switchPage('international',this)"><i class="ti ti-plane"></i>国际运单</button>
+    <button class="nav-item" onclick="switchPage('suppliers',this)"><i class="ti ti-building-factory-2"></i>供应商库</button>
     <div class="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-text" style="color:var(--text3)">未连接</span></div>
   </nav>
   <main class="main">
@@ -204,7 +245,19 @@ body { font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif
       </div>
       <div id="international-list"></div>
     </div>
-  </main>
+  
+    <div id="page-suppliers" class="page">
+      <div class="page-header">
+        <div><div class="page-title">供应商库</div><div class="page-sub">管理供应商信息、标签与产品目录</div></div>
+        <div class="header-actions">
+          <input id="supplier-search" type="text" placeholder="搜索供应商..." oninput="renderSuppliers()" style="padding:7px 12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;width:180px;">
+          <div id="tag-filter-bar" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;"></div>
+          <button class="add-btn" onclick="openModal('supplier')"><i class="ti ti-plus"></i>新增供应商</button>
+        </div>
+      </div>
+      <div id="supplier-list"></div>
+    </div>
+</main>
 </div>
 
 <div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
@@ -221,13 +274,15 @@ body { font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif
 <script>
 var LS_KEY = 'runhe_crossborder_v2';
 var LS_CFG = 'runhe_jsonbin_config';
-var data = { purchase:[], domestic:[], international:[] };
+var data = { purchase:[], domestic:[], international:[], suppliers:[] };
 var useCloud = false;
 var binId = null;
 var apiKey = null;
 var syncTimer = null;
 var currentModal = null;
 var modalImages = [];
+var modalSupplierReceipts = [];
+var modalCustomerReceipts = [];
 
 function loadLocal() {
   try {
@@ -250,6 +305,14 @@ function toast(msg) {
   setTimeout(function(){ el.classList.remove('show'); }, 2500);
 }
 
+
+// ── USD Rate ───────────────────────────────────────────────────
+window._usdRate = 7.25;
+fetch('https://api.exchangerate-api.com/v4/latest/USD')
+  .then(function(r){ return r.json(); })
+  .then(function(d){ if(d.rates&&d.rates.CNY) window._usdRate = Math.round(d.rates.CNY*100)/100; })
+  .catch(function(){});
+
 // ── JSONBin Cloud ──────────────────────────────────────────────
 function connectCloud(cfg) {
   binId = cfg.binId; apiKey = cfg.apiKey; useCloud = true;
@@ -265,6 +328,7 @@ function fetchCloud() {
   .then(function(r){ return r.json(); })
   .then(function(res) {
     if (res.record && res.record.purchase) {
+      if (!res.record.suppliers) res.record.suppliers = [];
       var cloudTotal = (res.record.purchase||[]).length + (res.record.domestic||[]).length + (res.record.international||[]).length;
       var localTotal = data.purchase.length + data.domestic.length + data.international.length;
       if (cloudTotal === 0 && localTotal > 0) {
@@ -368,10 +432,105 @@ function switchPage(p, el) {
   renderAll();
 }
 
+
+// ── Suppliers ──────────────────────────────────────────────────
+var activeTagFilter = null;
+
+function getAllTags() {
+  var tags = {};
+  data.suppliers.forEach(function(s){ (s.tags||[]).forEach(function(t){ tags[t] = (tags[t]||0)+1; }); });
+  return tags;
+}
+
+function renderTagFilterBar() {
+  var tags = getAllTags();
+  var bar = document.getElementById('tag-filter-bar');
+  if (!bar) return;
+  var html = Object.keys(tags).map(function(t){
+    return '<span class="tag'+(activeTagFilter===t?' active':'')+'" onclick="toggleTagFilter(''+t+'')">' + t + ' <span style="opacity:0.6">'+tags[t]+'</span></span>';
+  }).join('');
+  bar.innerHTML = html;
+}
+
+function toggleTagFilter(tag) {
+  activeTagFilter = activeTagFilter === tag ? null : tag;
+  renderSuppliers();
+}
+
+function renderSuppliers() {
+  renderTagFilterBar();
+  var q = (document.getElementById('supplier-search')||{}).value || '';
+  q = q.toLowerCase();
+  var list = data.suppliers.filter(function(s){
+    var matchQ = !q || s.name.toLowerCase().includes(q) || (s.contact||'').toLowerCase().includes(q);
+    var matchTag = !activeTagFilter || (s.tags||[]).includes(activeTagFilter);
+    return matchQ && matchTag;
+  });
+  var html = list.map(function(s){ return supplierCard(s); }).join('');
+  var el = document.getElementById('supplier-list');
+  if (el) el.innerHTML = html || '<div class="empty-state"><i class="ti ti-building-factory-2"></i>暂无供应商</div>';
+}
+
+function supplierCard(s) {
+  var initial = s.name ? s.name.charAt(0) : '?';
+  var tags = (s.tags||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
+  var products = (s.products||[]).map(function(p){
+    return '<div class="product-item"><img src="'+p.image+'" onclick="openLightbox(this.src)"><div class="product-item-info"><div class="product-item-name">'+p.name+'</div><div class="product-item-price">'+(p.price?'¥'+p.price:'')+'</div></div></div>';
+  }).join('');
+  return '<div class="supplier-card">'
+    +'<div class="supplier-header">'
+    +'<div style="display:flex;align-items:flex-start">'
+    +'<div class="supplier-avatar">'+initial+'</div>'
+    +'<div><div class="supplier-name">'+s.name+'</div>'
+    +'<div class="supplier-contact">'
+    +(s.contact?'<span><i class="ti ti-user" style="font-size:12px;margin-right:3px"></i>'+s.contact+'</span>':'')
+    +(s.phone?'<span><i class="ti ti-phone" style="font-size:12px;margin-right:3px"></i>'+s.phone+'</span>':'')
+    +(s.wechat?'<span><i class="ti ti-brand-wechat" style="font-size:12px;margin-right:3px"></i>'+s.wechat+'</span>':'')
+    +(s.city?'<span><i class="ti ti-map-pin" style="font-size:12px;margin-right:3px"></i>'+s.city+'</span>':'')
+    +(s.shopUrl?'<a href="'+s.shopUrl+'" target="_blank"><i class="ti ti-external-link" style="font-size:12px;margin-right:3px"></i>店铺链接</a>':'')
+    +'</div>'
+    +(tags?'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">'+tags+'</div>':'')
+    +'</div></div>'
+    +'<div class="action-row" style="margin-top:0">'
+    +'<button class="action-btn" onclick="openModal('supplier',''+s.id+'')"><i class="ti ti-edit"></i>编辑</button>'
+    +'<button class="action-btn" onclick="openAddProduct(''+s.id+'')"><i class="ti ti-photo-plus"></i>加产品</button>'
+    +'<button class="action-btn danger" onclick="del('suppliers',''+s.id+'')"><i class="ti ti-trash"></i>删除</button>'
+    +'</div>'
+    +'</div>'
+    +(s.notes?'<div class="note-box" style="margin-top:8px">'+s.notes+'</div>':'')
+    +(products?'<div class="product-grid">'+products+'</div>':'')
+    +'</div>';
+}
+
+var addProductSupplierId = null;
+function openAddProduct(sid) {
+  addProductSupplierId = sid;
+  var s = data.suppliers.find(function(x){ return x.id===sid; });
+  if (!s) return;
+  currentModal = {type:'addProduct', editId: sid};
+  document.getElementById('modal-title').textContent = '添加产品 — '+s.name;
+  document.getElementById('modal-body').innerHTML =
+    '<div class="form-group"><label class="form-label">产品名称</label><input id="f-pname" type="text" placeholder="如：LV黑色运动鞋"></div>'
+    +'<div class="form-row"><div class="form-group"><label class="form-label">价格（人民币）</label><input id="f-pprice" type="number" placeholder="0"></div><div class="form-group"><label class="form-label">备注</label><input id="f-pnote" type="text" placeholder="尺码、颜色等"></div></div>'
+    +'<div class="form-group"><label class="form-label">产品图片</label><div class="img-upload-box" onclick="document.getElementById(\'f-pimg-input\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>上传产品图</div><input id="f-pimg-input" type="file" accept="image/*" style="display:none" onchange="handleProductImg(this)"><div id="pimg-preview" style="margin-top:8px"></div></div>';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+var pendingProductImg = null;
+function handleProductImg(input) {
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    pendingProductImg = e.target.result;
+    document.getElementById('pimg-preview').innerHTML = '<img src="'+pendingProductImg+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">';
+  };
+  reader.readAsDataURL(file);
+}
+
 // ── Render ─────────────────────────────────────────────────────
 function renderAll() {
   updateStats(); renderAlerts(); renderOverview();
-  renderPurchase(); renderDomestic(); renderInternational();
+  renderPurchase(); renderDomestic(); renderInternational(); renderSuppliers();
 }
 
 function updateStats() {
@@ -506,6 +665,24 @@ function del(col, id) {
   if (!confirm('确定要删除吗？')) return;
   removeRecord(col, id); toast('已删除');
 }
+
+function addTag(e) {
+  if (e.key !== 'Enter') return;
+  var input = document.getElementById('f-stag-input');
+  var val = input.value.trim();
+  if (!val) return;
+  var row = document.getElementById('tag-row');
+  var span = document.createElement('span');
+  span.className = 'tag active';
+  span.onclick = function(){ removeTag(this); };
+  span.textContent = val + ' ×';
+  row.insertBefore(span, input);
+  input.value = '';
+  e.preventDefault();
+}
+function removeTag(el) {
+  el.parentNode.removeChild(el);
+}
 function openLightbox(src) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('lightbox').classList.add('open');
@@ -524,15 +701,31 @@ function openModal(type, editId) {
   }
   var e = existing||{};
   modalImages = (e.images||[]).slice();
+  modalSupplierReceipts = (e.supplierReceipts||[]).slice();
+  modalCustomerReceipts = (e.customerReceipts||[]).slice();
   var html = '';
   if (type==='purchase') {
     var sz = e.sizes ? Object.entries(e.sizes).map(function(kv){ return kv[0]+':'+kv[1]; }).join(',') : '';
     html = '<div class="form-group"><label class="form-label">产品名称 *</label><input id="f-product" type="text" value="'+(e.product||'')+'"></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="form-group"><label class="form-label">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="form-group"><label class="form-label">供应商</label><input id="f-supplier" type="text" list="supplier-list-options" value="'+(e.supplier||'')+'"><datalist id="supplier-list-options">'+data.suppliers.map(function(s){ return '<option value="'+s.name+'">'; }).join('')+'</datalist></div></div>'
       +'<div class="form-group"><label class="form-label">尺码分配（S:5,M:8,L:6，可不填）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'+'<div class="form-group"><label class="form-label">总数量（不按尺码分配时直接填）</label><input id="f-qty" type="number" placeholder="如：10" value="'+(e.directQty||'')+'"></div>'
       +'<div class="form-row"><div class="form-group"><label class="form-label">颜色</label><input id="f-color" type="text" value="'+(e.color||'')+'"></div><div class="form-group"><label class="form-label">截止日期</label><input id="f-deadline" type="date" value="'+(e.deadline||'')+'"></div></div>'
       +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>'
-      +'<div class="form-group"><label class="form-label">商品图片</label><div class="img-upload-box" onclick="document.getElementById(\'f-img-input\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-img-input" type="file" accept="image/*" multiple style="display:none" onchange="handleImgUpload(this)"><div class="img-preview-grid" id="img-preview-grid">'+buildImgPreviews(modalImages)+'</div></div>';
+      +'<div class="form-group"><label class="form-label">商品图片</label><div class="img-upload-box" onclick="document.getElementById(\'f-img-input\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-img-input" type="file" accept="image/*" multiple style="display:none" onchange="handleImgUpload(this)"><div class="img-preview-grid" id="img-preview-grid">'+buildImgPreviews(modalImages)+'</div></div>'
+      +'<hr style="border:none;border-top:0.5px solid var(--border);margin:14px 0">'
+      +'<div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px;">💰 财务信息</div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">供应商付款金额（人民币 ¥）</label><input id="f-supplierAmount" type="number" placeholder="0.00" value="'+(e.supplierAmount||'')+'"></div><div class="form-group"><label class="form-label">供应商付款状态</label><select id="f-supplierPayStatus"><option value="unpaid"'+(( e.supplierPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待付款</option><option value="paid"'+((e.supplierPayStatus)==='paid'?' selected':'')+'>已付款</option><option value="partial"'+((e.supplierPayStatus)==='partial'?' selected':'')+'>部分付</option></select></div></div>'
+      +'<div class="form-group"><label class="form-label">供应商付款截图</label><div class="img-upload-box" onclick="document.getElementById(\'f-sr-input\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传付款凭证</div><input id="f-sr-input" type="file" accept="image/*" multiple style="display:none" onchange="handleReceiptUpload(this,\'supplier\')"><div class="img-preview-grid" id="sr-preview-grid">'+buildImgPreviews(modalSupplierReceipts)+'</div></div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">客户收款金额（美金 $）</label><input id="f-customerAmount" type="number" placeholder="0.00" value="'+(e.customerAmount||'')+'"></div><div class="form-group"><label class="form-label">客户收款状态</label><select id="f-customerPayStatus"><option value="unpaid"'+((e.customerPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待收款</option><option value="paid"'+((e.customerPayStatus)==='paid'?' selected':'')+'>已收款</option><option value="partial"'+((e.customerPayStatus)==='partial'?' selected':'')+'>部分收</option></select></div></div>'
+      +'<div class="form-group"><label class="form-label">客户收款截图</label><div class="img-upload-box" onclick="document.getElementById(\'f-cr-input\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传收款凭证</div><input id="f-cr-input" type="file" accept="image/*" multiple style="display:none" onchange="handleReceiptUpload(this,\'customer\')"><div class="img-preview-grid" id="cr-preview-grid">'+buildImgPreviews(modalCustomerReceipts)+'</div></div>';
+  } else if (type==='supplier') {
+    var existingTags = (e.tags||[]);
+    html = '<div class="form-group"><label class="form-label">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="form-group"><label class="form-label">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="form-group"><label class="form-label">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
+      +'<div class="form-group"><label class="form-label">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
+      +'<div class="form-group"><label class="form-label">标签（回车添加）</label><div class="tag-input-row" id="tag-row">'+existingTags.map(function(t){ return '<span class="tag active" onclick="removeTag(this)">'+t+' ×</span>'; }).join('')+'<input class="tag-input" id="f-stag-input" placeholder="输入标签后回车" onkeydown="addTag(event)"></div></div>'
+      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
   } else if (type==='domestic') {
     html = '<div class="form-row"><div class="form-group"><label class="form-label">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="form-group"><label class="form-label">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
       +'<div class="form-group"><label class="form-label">菜鸟驿站</label><input id="f-station" type="text" value="'+(e.station||'')+'"></div>'
@@ -571,6 +764,24 @@ function handleImgUpload(input) {
   });
   input.value = '';
 }
+function handleReceiptUpload(input, type) {
+  Array.from(input.files).forEach(function(file){
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      if (type === 'supplier') {
+        modalSupplierReceipts.push(ev.target.result);
+        var g = document.getElementById('sr-preview-grid');
+        if (g) g.innerHTML = buildImgPreviews(modalSupplierReceipts);
+      } else {
+        modalCustomerReceipts.push(ev.target.result);
+        var g = document.getElementById('cr-preview-grid');
+        if (g) g.innerHTML = buildImgPreviews(modalCustomerReceipts);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
 function removeModalImg(idx) {
   modalImages.splice(idx,1);
   var g = document.getElementById('img-preview-grid');
@@ -586,6 +797,28 @@ function g(id) { var el=document.getElementById(id); return el?el.value.trim():'
 
 function saveModal() {
   var type=currentModal.type, editId=currentModal.editId;
+  if (type==='addProduct') {
+    var s = data.suppliers.find(function(x){ return x.id===editId; });
+    if (s) {
+      if (!s.products) s.products = [];
+      s.products.push({ name:g('f-pname'), price:parseFloat(g('f-pprice'))||0, note:g('f-pnote'), image:pendingProductImg||'' });
+      persist('suppliers', s);
+      pendingProductImg = null;
+    }
+    closeModal(); return;
+  }
+  if (type==='supplier') {
+    var tags = Array.from(document.querySelectorAll('#tag-row .tag.active')).map(function(el){ return el.textContent.replace(' ×','').trim(); });
+    if (editId) {
+      var sv = data.suppliers.find(function(x){ return x.id===editId; });
+      Object.assign(sv,{name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes')});
+      persist('suppliers',sv);
+    } else {
+      var ns={id:'S'+String(data.suppliers.length+1).padStart(3,'0'),name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes'),products:[]};
+      data.suppliers.push(ns); persist('suppliers',ns);
+    }
+    closeModal(); toast('已保存'); return;
+  }
   if (type==='purchase') {
     var sz=g('f-sizes'), sizes={};
     sz.split(',').forEach(function(s){ var p=s.split(':'); if(p[0]&&p[1]) sizes[p[0].trim()]=parseInt(p[1])||0; });
@@ -593,12 +826,20 @@ function saveModal() {
 var qty=Object.values(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):(directQty||0);
     if (editId) {
       var p=data.purchase.find(function(x){return x.id===editId;});
-      Object.assign(p,{product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),notes:g('f-notes'),images:modalImages.slice()});
+      Object.assign(p,{product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),notes:g('f-notes'),images:modalImages.slice(),supplierAmount:parseFloat(g('f-supplierAmount'))||0,supplierPayStatus:document.getElementById('f-supplierPayStatus').value,supplierReceipts:modalSupplierReceipts.slice(),customerAmount:parseFloat(g('f-customerAmount'))||0,customerPayStatus:document.getElementById('f-customerPayStatus').value,customerReceipts:modalCustomerReceipts.slice()});
       persist('purchase',p);
     } else {
-      var np={id:'P'+String(data.purchase.length+1).padStart(3,'0'),product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),status:'pending',notes:g('f-notes'),images:modalImages.slice()};
+      var np={id:'P'+String(data.purchase.length+1).padStart(3,'0'),product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),status:'pending',notes:g('f-notes'),images:modalImages.slice(),supplierAmount:parseFloat(g('f-supplierAmount'))||0,supplierPayStatus:document.getElementById('f-supplierPayStatus').value,supplierReceipts:modalSupplierReceipts.slice(),customerAmount:parseFloat(g('f-customerAmount'))||0,customerPayStatus:document.getElementById('f-customerPayStatus').value,customerReceipts:modalCustomerReceipts.slice()};
       data.purchase.push(np); persist('purchase',np);
     }
+  } else if (type==='supplier') {
+    var existingTags = (e.tags||[]);
+    html = '<div class="form-group"><label class="form-label">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="form-group"><label class="form-label">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
+      +'<div class="form-row"><div class="form-group"><label class="form-label">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="form-group"><label class="form-label">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
+      +'<div class="form-group"><label class="form-label">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
+      +'<div class="form-group"><label class="form-label">标签（回车添加）</label><div class="tag-input-row" id="tag-row">'+existingTags.map(function(t){ return '<span class="tag active" onclick="removeTag(this)">'+t+' ×</span>'; }).join('')+'<input class="tag-input" id="f-stag-input" placeholder="输入标签后回车" onkeydown="addTag(event)"></div></div>'
+      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
   } else if (type==='domestic') {
     var exp=parseInt(g('f-expectedPcs'))||0, ar=g('f-actualPcs'), act=ar!==''?parseInt(ar):null;
     var st=act!==null?(act<exp?'issue':'ok'):'pending';
