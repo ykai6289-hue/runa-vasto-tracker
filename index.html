@@ -67,7 +67,10 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
 .overlay.open{display:flex}
 .modal{background:var(--surface);border-radius:var(--rl);border:.5px solid var(--border2);padding:1.5rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
 .modal-t{font-size:16px;font-weight:600}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:22px;line-height:1;padding:2px 6px;border-radius:6px}
+.modal-close:hover{background:var(--surface2);color:var(--text)}
 .fg{margin-bottom:14px}.fl{font-size:12px;color:var(--text2);margin-bottom:5px;display:block}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .fg input,.fg select,.fg textarea{width:100%;padding:8px 12px;background:var(--surface2);border:.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;transition:border .15s;font-family:inherit}
@@ -94,7 +97,6 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
 .ip-del{position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,.55);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer}
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;align-items:center;justify-content:center;cursor:pointer}
 .lightbox.open{display:flex}.lightbox img{max-width:90vw;max-height:90vh;border-radius:8px}
-/* Finance */
 .fin{margin-top:12px;background:var(--surface2);border-radius:var(--r);padding:12px 14px}
 .fin-t{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
 .fin-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -103,12 +105,11 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
 .pv{font-size:16px;font-weight:600}.pv.pos{color:var(--accent)}.pv.neg{color:#c0392b}
 .ps2{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-left:6px}
 .ps2.paid{background:#eaf3de;color:#27500a}.ps2.unpaid{background:#faeeda;color:#633806}.ps2.partial{background:#e6f1fb;color:#0c447c}
-/* Supplier */
 .sup-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:10px}
 .sup-av{width:40px;height:40px;border-radius:50%;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;flex-shrink:0;margin-right:12px}
 .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:.5px solid var(--border);cursor:pointer;margin:2px}
 .tag.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
-.tag-input{padding:3px 8px;background:var(--surface2);border:.5px solid var(--border2);border-radius:6px;font-size:12px;color:var(--text);outline:none;width:120px;font-family:inherit}
+.tag-input{padding:3px 8px;background:transparent;border:none;font-size:12px;color:var(--text);outline:none;flex:1;min-width:80px;font-family:inherit}
 .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px}
 .prod-item{border:.5px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface)}
 .prod-item img{width:100%;height:80px;object-fit:cover;cursor:pointer}
@@ -125,17 +126,16 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
 
 <div id="setup-ov" class="setup-ov" style="display:none">
   <div class="setup-box">
-    <div class="setup-t">⚙️ 云端同步配置</div>
-    <div class="setup-s">使用免费的 JSONBin 存储数据，团队所有人打开此网址都能实时共享同一份数据。</div>
+    <div class="setup-t">⚙️ Firebase 云端配置</div>
+    <div class="setup-s">使用 Firebase Firestore 存储数据，支持多人实时共享。填入你的 Firebase 项目配置即可。</div>
     <div class="setup-steps">
-      1. 打开 <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> 注册免费账号<br>
-      2. 左侧 <strong>API Keys</strong> → 复制 Master Key<br>
-      3. 左侧 <strong>Bins</strong> → Create a Bin → 输入 <code>{"purchase":[],"domestic":[],"international":[],"suppliers":[]}</code> → Save<br>
-      4. 复制右侧面板的 Bin ID
+      已有项目：<strong>Runa Vasto</strong><br>
+      Project ID：<strong>runa-vasto</strong><br>
+      填写下方 API Key 和 Project ID 即可连接
     </div>
     <div class="fr">
-      <div class="fg"><label class="fl">Master Key</label><input id="setup-ak" type="text" placeholder="$2a$10$..."></div>
-      <div class="fg"><label class="fl">Bin ID</label><input id="setup-bid" type="text" placeholder="6a1eb983..."></div>
+      <div class="fg"><label class="fl">API Key</label><input id="setup-ak" type="text" placeholder="AIza..."></div>
+      <div class="fg"><label class="fl">Project ID</label><input id="setup-pid" type="text" placeholder="runa-vasto"></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
       <button class="btn btn-c" onclick="skipSetup()">跳过（仅本机）</button>
@@ -157,8 +157,6 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
     <div class="sync-row"><div class="dot" id="sync-dot"></div><span id="sync-txt" style="color:var(--text3)">未连接</span></div>
   </nav>
   <main class="main">
-
-    <!-- 总览 -->
     <div id="page-overview" class="page active">
       <div class="ph">
         <div><div class="pt">业务总览</div><div class="ps">实时跟踪所有跨境订单状态</div></div>
@@ -178,8 +176,6 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
       <div style="font-size:14px;font-weight:600;margin-bottom:12px">近期动态</div>
       <div id="overview-list"></div>
     </div>
-
-    <!-- 采购需求 -->
     <div id="page-purchase" class="page">
       <div class="ph">
         <div><div class="pt">采购需求管理</div><div class="ps">尺码规格确认 & 供应商对齐</div></div>
@@ -187,8 +183,6 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
       </div>
       <div id="purchase-list"></div>
     </div>
-
-    <!-- 国内发货 -->
     <div id="page-domestic" class="page">
       <div class="ph">
         <div><div class="pt">国内发货追踪</div><div class="ps">菜鸟驿站取件核对</div></div>
@@ -196,8 +190,6 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
       </div>
       <div id="domestic-list"></div>
     </div>
-
-    <!-- 国际运单 -->
     <div id="page-international" class="page">
       <div class="ph">
         <div><div class="pt">国际运单追踪</div><div class="ps">货代运单号 & 物流状态管理</div></div>
@@ -205,8 +197,6 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
       </div>
       <div id="international-list"></div>
     </div>
-
-    <!-- 供应商库 -->
     <div id="page-suppliers" class="page">
       <div class="ph">
         <div><div class="pt">供应商库</div><div class="ps">管理供应商信息、标签与产品目录</div></div>
@@ -218,13 +208,15 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
       </div>
       <div id="supplier-list"></div>
     </div>
-
   </main>
 </div>
 
 <div class="overlay" id="modal-ov">
   <div class="modal">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem"><div class="modal-t" id="modal-t" style="margin-bottom:0"></div><button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;line-height:1;padding:4px 6px;border-radius:6px;transition:all .15s" onmouseover="this.style.background='var(--surface2)';this.style.color='var(--text)'" onmouseout="this.style.background='none';this.style.color='var(--text3)'">×</button></div>
+    <div class="modal-hd">
+      <div class="modal-t" id="modal-t"></div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
     <div id="modal-body"></div>
     <div class="mf">
       <button class="btn btn-c" onclick="closeModal()">取消</button>
@@ -234,27 +226,31 @@ body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;backg
 </div>
 
 <script>
-var LS_KEY='rv_data_v3', LS_CFG='rv_cfg_v1';
+var LS_KEY='rv_data_v4', LS_CFG='rv_fb_cfg_v1';
 var data={purchase:[],domestic:[],international:[],suppliers:[]};
-var useCloud=false, binId=null, apiKey=null, syncTimer=null;
+var useCloud=false, fbApiKey=null, fbProjectId=null;
 var currentModal=null;
 var mImgs=[], mSupReceipts=[], mCustReceipts=[], mProdImg=null;
 var activeTagFilter=null;
 var usdRate=7.25;
 
-// fetch rate
+// fetch USD rate
 fetch('https://api.exchangerate-api.com/v4/latest/USD')
   .then(function(r){return r.json();})
-  .then(function(d){if(d.rates&&d.rates.CNY)usdRate=Math.round(d.rates.CNY*100)/100;})
+  .then(function(d){if(d.rates&&d.rates.CNY)usdRate=Math.round(d.rates.CNY*100)/100;renderAll();})
   .catch(function(){});
 
+// ── Local Storage ──────────────────────────────────────────────
 function loadLocal(){
-  try{var s=localStorage.getItem(LS_KEY);data=s?JSON.parse(s):{purchase:[],domestic:[],international:[],suppliers:[]};}
-  catch(e){data={purchase:[],domestic:[],international:[],suppliers:[]};}
-  if(!data.suppliers)data.suppliers=[];
+  try{
+    var s=localStorage.getItem(LS_KEY);
+    data=s?JSON.parse(s):{purchase:[],domestic:[],international:[],suppliers:[]};
+    if(!data.suppliers)data.suppliers=[];
+  }catch(e){data={purchase:[],domestic:[],international:[],suppliers:[]};}
 }
 function saveLocal(){localStorage.setItem(LS_KEY,JSON.stringify(data));}
 
+// ── Sync UI ────────────────────────────────────────────────────
 function setSS(state,txt){
   document.getElementById('sync-dot').className='dot'+(state?' '+state:'');
   document.getElementById('sync-txt').textContent=txt;
@@ -269,89 +265,188 @@ function openLightbox(src){
   document.getElementById('lightbox').classList.add('open');
 }
 
-// ── Cloud ──────────────────────────────────────────────────────
-function connectCloud(cfg){
-  binId=cfg.binId;apiKey=cfg.apiKey;useCloud=true;
-  setSS('pulse','连接中...');fetchCloud();
+// ── Firebase REST API ──────────────────────────────────────────
+var FB_BASE='';
+function fbUrl(col,docId){
+  var base='https://firestore.googleapis.com/v1/projects/'+fbProjectId+'/databases/(default)/documents/'+col;
+  return docId?base+'/'+docId+'?key='+fbApiKey:base+'?key='+fbApiKey;
 }
-function fetchCloud(){
-  if(!binId||!apiKey)return;
-  var lt=data.purchase.length+data.domestic.length+data.international.length;
-  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey}})
-  .then(function(r){
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    return r.json();
-  })
-  .then(function(res){
-    try{
-      if(res.record&&res.record.purchase){
-        if(!res.record.suppliers)res.record.suppliers=[];
-        var ct=(res.record.purchase||[]).length+(res.record.domestic||[]).length+(res.record.international||[]).length;
-        if(ct===0&&lt>0){pushCloud();}
-        else if(ct>0){data=res.record;if(!data.suppliers)data.suppliers=[];saveLocal();renderAll();}
-        setSS('ok','已同步');
-      } else {
-        if(lt>0)pushCloud();
-        setSS('ok','已同步');
-      }
-    }catch(e){console.error('fetchCloud parse error',e);setSS('err','数据解析失败');}
-  })
-  .catch(function(err){
-    console.error('fetchCloud error',err);
+
+function toFbDoc(obj){
+  var fields={};
+  Object.keys(obj).forEach(function(k){
+    var v=obj[k];
+    if(v===null||v===undefined){fields[k]={nullValue:null};}
+    else if(typeof v==='boolean'){fields[k]={booleanValue:v};}
+    else if(typeof v==='number'){fields[k]={doubleValue:v};}
+    else if(typeof v==='string'){fields[k]={stringValue:v};}
+    else if(Array.isArray(v)){fields[k]={arrayValue:{values:v.map(function(i){return typeof i==='string'?{stringValue:i}:typeof i==='number'?{doubleValue:i}:{stringValue:JSON.stringify(i)};})}};}
+    else if(typeof v==='object'){fields[k]={stringValue:JSON.stringify(v)};}
+  });
+  return {fields:fields};
+}
+
+function fromFbDoc(doc){
+  if(!doc||!doc.fields)return null;
+  var obj={};
+  Object.keys(doc.fields).forEach(function(k){
+    var fv=doc.fields[k];
+    if(fv.nullValue!==undefined)obj[k]=null;
+    else if(fv.booleanValue!==undefined)obj[k]=fv.booleanValue;
+    else if(fv.doubleValue!==undefined)obj[k]=fv.doubleValue;
+    else if(fv.integerValue!==undefined)obj[k]=parseInt(fv.integerValue);
+    else if(fv.stringValue!==undefined){
+      var s=fv.stringValue;
+      try{if((s.startsWith('{')||s.startsWith('['))&&s.length>2)obj[k]=JSON.parse(s);else obj[k]=s;}
+      catch(e){obj[k]=s;}
+    }
+    else if(fv.arrayValue!==undefined){
+      obj[k]=(fv.arrayValue.values||[]).map(function(v){
+        if(v.stringValue!==undefined){try{return JSON.parse(v.stringValue);}catch(e){return v.stringValue;}}
+        if(v.doubleValue!==undefined)return v.doubleValue;
+        if(v.integerValue!==undefined)return parseInt(v.integerValue);
+        return null;
+      });
+    }
+  });
+  return obj;
+}
+
+function fbGetAll(col){
+  return fetch(fbUrl(col),{method:'GET'})
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(res){
+      if(!res.documents)return[];
+      return res.documents.map(function(doc){
+        var obj=fromFbDoc(doc);
+        if(obj&&doc.name)obj._fbName=doc.name;
+        return obj;
+      }).filter(Boolean);
+    });
+}
+
+function fbSet(col,id,obj){
+  var body=toFbDoc(obj);
+  return fetch(fbUrl(col,id)+'&key='+fbApiKey,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  }).catch(function(e){console.error('fbSet error',e);setSS('err','写入失败');});
+}
+
+function fbDelete(col,id){
+  return fetch(fbUrl(col,id)+'&key='+fbApiKey,{method:'DELETE'})
+    .catch(function(e){console.error('fbDelete error',e);});
+}
+
+// correct URL helper - fbUrl already appends key, fix double key
+function fbSetDoc(col,id,obj){
+  var url='https://firestore.googleapis.com/v1/projects/'+fbProjectId+'/databases/(default)/documents/'+col+'/'+id+'?key='+fbApiKey;
+  return fetch(url,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(toFbDoc(obj))
+  }).then(function(r){if(!r.ok)return r.text().then(function(t){throw new Error(t);});return r.json();});
+}
+
+function fbDelDoc(col,id){
+  var url='https://firestore.googleapis.com/v1/projects/'+fbProjectId+'/databases/(default)/documents/'+col+'/'+id+'?key='+fbApiKey;
+  return fetch(url,{method:'DELETE'}).catch(function(e){console.error(e);});
+}
+
+function fbListCol(col){
+  var url='https://firestore.googleapis.com/v1/projects/'+fbProjectId+'/databases/(default)/documents/'+col+'?key='+fbApiKey+'&pageSize=200';
+  return fetch(url)
+    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(function(res){
+      if(!res.documents)return[];
+      return res.documents.map(function(doc){return fromFbDoc(doc);}).filter(Boolean);
+    });
+}
+
+function loadFromFirebase(){
+  setSS('pulse','同步中...');
+  Promise.all([
+    fbListCol('purchase'),
+    fbListCol('domestic'),
+    fbListCol('international'),
+    fbListCol('suppliers')
+  ]).then(function(results){
+    data.purchase=results[0];
+    data.domestic=results[1];
+    data.international=results[2];
+    data.suppliers=results[3]||[];
+    saveLocal();renderAll();setSS('ok','已同步');
+  }).catch(function(e){
+    console.error('loadFromFirebase error',e);
     setSS('err','读取失败，使用本地数据');
-    // Don't block UI - just use local data
     renderAll();
   });
 }
-function pushCloud(){
-  if(!binId||!apiKey)return;
-  clearTimeout(syncTimer);
-  syncTimer=setTimeout(function(){
+
+function persistDoc(col,item){
+  saveLocal();renderAll();
+  if(useCloud&&fbApiKey&&fbProjectId){
     setSS('pulse','同步中...');
-    fetch('https://api.jsonbin.io/v3/b/'+binId,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':apiKey},body:JSON.stringify(data)})
-    .then(function(){setSS('ok','已同步');})
-    .catch(function(){setSS('err','同步失败');});
-  },800);
+    fbSetDoc(col,item.id,item)
+      .then(function(){setSS('ok','已同步');})
+      .catch(function(e){console.error(e);setSS('err','同步失败');});
+  }
 }
-function persist(){saveLocal();if(useCloud)pushCloud();renderAll();}
+
+function deleteDoc(col,id){
+  data[col]=data[col].filter(function(x){return x.id!==id;});
+  saveLocal();renderAll();
+  if(useCloud&&fbApiKey&&fbProjectId){
+    fbDelDoc(col,id).then(function(){setSS('ok','已同步');});
+  }
+}
 
 // ── Setup ──────────────────────────────────────────────────────
+function connectFirebase(cfg){
+  fbApiKey=cfg.apiKey;fbProjectId=cfg.projectId;useCloud=true;
+  loadFromFirebase();
+}
+
 function skipSetup(){
   document.getElementById('setup-ov').style.display='none';
   loadLocal();renderAll();
   document.getElementById('sync-dot').style.background='#aaa';
   document.getElementById('sync-txt').textContent='仅本机存储';
 }
+
 function applySetup(){
   var ak=document.getElementById('setup-ak').value.trim();
-  var bid=document.getElementById('setup-bid').value.trim();
-  if(!ak||!bid){alert('请填写 Master Key 和 Bin ID');return;}
-  var cfg={apiKey:ak,binId:bid};
+  var pid=document.getElementById('setup-pid').value.trim();
+  if(!ak||!pid){alert('请填写 API Key 和 Project ID');return;}
+  var cfg={apiKey:ak,projectId:pid};
   localStorage.setItem(LS_CFG,JSON.stringify(cfg));
   document.getElementById('setup-ov').style.display='none';
-  loadLocal();renderAll();connectCloud(cfg);
+  loadLocal();renderAll();
+  connectFirebase(cfg);
 }
+
 function reconfigure(){
-  try{var cfg=JSON.parse(localStorage.getItem(LS_CFG)||'{}');
+  try{
+    var cfg=JSON.parse(localStorage.getItem(LS_CFG)||'{}');
     document.getElementById('setup-ak').value=cfg.apiKey||'';
-    document.getElementById('setup-bid').value=cfg.binId||'';}catch(e){}
+    document.getElementById('setup-pid').value=cfg.projectId||'';
+  }catch(e){}
   document.getElementById('setup-ov').style.display='flex';
 }
+
+// ── Init ───────────────────────────────────────────────────────
 (function init(){
   try{
+    loadLocal();renderAll();
     var s=localStorage.getItem(LS_CFG);
-    loadLocal();
-    renderAll();
     if(s){
-      try{connectCloud(JSON.parse(s));}
-      catch(e){console.error('connectCloud init error',e);setSS('err','云端配置有误');}
+      try{connectFirebase(JSON.parse(s));}
+      catch(e){console.error('Firebase init error',e);setSS('err','云端配置有误');}
     } else {
       document.getElementById('setup-ov').style.display='flex';
     }
-  }catch(e){
-    console.error('init error',e);
-    renderAll();
-  }
+  }catch(e){console.error('init error',e);renderAll();}
 })();
 
 // ── Nav ────────────────────────────────────────────────────────
@@ -365,15 +460,19 @@ function switchPage(p,el){
 
 // ── Render ─────────────────────────────────────────────────────
 function renderAll(){
-  updateStats();renderAlerts();renderOverview();
-  renderPurchase();renderDomestic();renderIntl();renderSuppliers();
+  try{
+    updateStats();renderAlerts();renderOverview();
+    renderPurchase();renderDomestic();renderIntl();renderSuppliers();
+  }catch(e){console.error('renderAll error',e);}
 }
+
 function updateStats(){
   document.getElementById('s0').textContent=data.purchase.length;
   document.getElementById('s1').textContent=data.domestic.filter(function(d){return d.status==='issue';}).length;
   document.getElementById('s2').textContent=data.international.filter(function(i){return i.status==='transit';}).length;
   document.getElementById('s3').textContent=data.international.filter(function(i){return i.status==='done';}).length;
 }
+
 function renderAlerts(){
   var h='';
   data.domestic.filter(function(d){return d.status==='issue';}).forEach(function(d){
@@ -384,6 +483,7 @@ function renderAlerts(){
   });
   document.getElementById('alerts').innerHTML=h;
 }
+
 function renderOverview(){
   var cards=[];
   data.domestic.filter(function(d){return d.status==='issue';}).forEach(function(d){cards.push(domCard(d,false));});
@@ -392,6 +492,7 @@ function renderOverview(){
   data.international.filter(function(i){return i.trackingNo;}).forEach(function(i){cards.push(intlCard(i,false));});
   document.getElementById('overview-list').innerHTML=cards.slice(0,8).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无数据</div>';
 }
+
 function renderPurchase(){
   document.getElementById('purchase-list').innerHTML=data.purchase.map(function(p){return purCard(p,true);}).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无采购需求</div>';
 }
@@ -402,7 +503,7 @@ function renderIntl(){
   document.getElementById('international-list').innerHTML=data.international.map(function(i){return intlCard(i,true);}).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无运单记录</div>';
 }
 
-// ── Purchase Card ──────────────────────────────────────────────
+// ── Cards ──────────────────────────────────────────────────────
 function purCard(p,full){
   var bm={confirmed:['bc','已付款'],pending:['bp','待付款']};
   var bd=bm[p.status]||bm.pending;
@@ -410,44 +511,42 @@ function purCard(p,full){
   var pimgs=(p.images&&p.images.length)?'<div class="imgs">'+p.images.map(function(s){return '<img class="img-t" src="'+s+'" onclick="openLightbox(this.src)">';}).join('')+'</div>':'';
   var fin='';
   if(full){
-    var sAmt=p.supplierAmount||0, cUsd=p.customerAmount||0;
+    var sAmt=p.supplierAmount||0,cUsd=p.customerAmount||0;
     var cCny=Math.round(cUsd*usdRate*100)/100;
     var profit=Math.round((cCny-sAmt)*100)/100;
     var pRate=cCny>0?Math.round(profit/cCny*1000)/10:0;
-    var spSt=p.supplierPayStatus||'unpaid', cpSt=p.customerPayStatus||'unpaid';
+    var spSt=p.supplierPayStatus||'unpaid',cpSt=p.customerPayStatus||'unpaid';
     var spL={unpaid:'待付款',paid:'已付款',partial:'部分付'}[spSt];
     var cpL={unpaid:'待收款',paid:'已收款',partial:'部分收'}[cpSt];
     var srImgs=(p.supplierReceipts||[]).map(function(s){return '<img class="img-sm" src="'+s+'" onclick="openLightbox(this.src)">';}).join('');
     var crImgs=(p.customerReceipts||[]).map(function(s){return '<img class="img-sm" src="'+s+'" onclick="openLightbox(this.src)">';}).join('');
     fin='<div class="fin"><div class="fin-t">💰 财务核算 <span style="font-size:10px;color:var(--text3)">汇率 1 USD = '+usdRate+' CNY</span></div>'
       +'<div class="fin-g">'
-      +'<div class="fin-i">供应商付款 <span class="ps2 '+spSt+'">'+spL+'</span><strong>'+(sAmt?'¥'+sAmt:'——')+'</strong>'+(srImgs?'<div class="imgs" style="margin-top:6px">'+srImgs+'</div>':'')+'</div>'
-      +'<div class="fin-i">客户收款 <span class="ps2 '+cpSt+'">'+cpL+'</span><strong>'+(cUsd?'$'+cUsd+' <span style="font-size:11px;color:var(--text3)">≈ ¥'+cCny+'</span>':'——')+'</strong>'+(crImgs?'<div class="imgs" style="margin-top:6px">'+crImgs+'</div>':'')+'</div>'
+      +'<div class="fin-i">供应商付款<span class="ps2 '+spSt+'">'+spL+'</span><strong>'+(sAmt?'¥'+sAmt:'——')+'</strong>'+(srImgs?'<div class="imgs" style="margin-top:6px">'+srImgs+'</div>':'')+'</div>'
+      +'<div class="fin-i">客户收款<span class="ps2 '+cpSt+'">'+cpL+'</span><strong>'+(cUsd?'$'+cUsd+' <span style="font-size:11px;color:var(--text3)">≈ ¥'+cCny+'</span>':'——')+'</strong>'+(crImgs?'<div class="imgs" style="margin-top:6px">'+crImgs+'</div>':'')+'</div>'
       +'</div>'
       +(sAmt&&cUsd?'<div class="profit-bar"><span style="font-size:12px;color:var(--text2)">毛利</span><div><span class="pv '+(profit>=0?'pos':'neg')+'">'+(profit>=0?'+':'')+profit+' 元</span><span style="font-size:11px;color:var(--text3);margin-left:6px">('+pRate+'%)</span></div></div>':'')
       +'</div>';
   }
   var act=full?'<div class="ar"><button class="ab '+(p.status==='confirmed'?'':'p')+'" onclick="toggleConfirm(\''+p.id+'\')"><i class="ti ti-check"></i>'+(p.status==='confirmed'?'撤销付款':'确认付款')+'</button><button class="ab" onclick="openModal(\'purchase\',\''+p.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="ab d" onclick="delRecord(\'purchase\',\''+p.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
   var detail=full
-    ?'<hr class="div"><div class="mr"><div class="mi">颜色<strong>'+(p.color||'—')+'</strong></div><div class="mi">总件数<strong>'+p.qty+' 件</strong></div><div class="mi">截止<strong>'+p.deadline+'</strong></div></div>'+(st?'<div style="margin-top:10px;font-size:12px;color:var(--text3)">尺码分配</div><div class="sg">'+st+'</div>':'')+(p.notes?'<div class="nb">备注：'+p.notes+'</div>':'')+pimgs+fin
-    :'<div class="mr" style="margin-top:8px"><div class="mi">截止 <strong>'+p.deadline+'</strong></div><div class="mi">共 <strong>'+p.qty+' 件</strong></div></div>';
-  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-shirt" style="font-size:13px;margin-right:5px"></i>'+p.product+'<span class="cid">'+p.id+'</span></div><div class="cs">客户：'+p.client+' · 供应商：'+p.supplier+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+    ?'<hr class="div"><div class="mr"><div class="mi">颜色<strong>'+(p.color||'—')+'</strong></div><div class="mi">总件数<strong>'+p.qty+' 件</strong></div><div class="mi">截止<strong>'+(p.deadline||'—')+'</strong></div></div>'+(st?'<div style="margin-top:10px;font-size:12px;color:var(--text3)">尺码分配</div><div class="sg">'+st+'</div>':'')+(p.notes?'<div class="nb">备注：'+p.notes+'</div>':'')+pimgs+fin
+    :'<div class="mr" style="margin-top:8px"><div class="mi">截止 <strong>'+(p.deadline||'—')+'</strong></div><div class="mi">共 <strong>'+(p.qty||0)+' 件</strong></div></div>';
+  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-shirt" style="font-size:13px;margin-right:5px"></i>'+p.product+'<span class="cid">'+p.id+'</span></div><div class="cs">客户：'+(p.client||'—')+' · 供应商：'+(p.supplier||'—')+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
 }
 
-// ── Domestic Card ──────────────────────────────────────────────
 function domCard(d,full){
   var sm={pending:['bp','待到达'],ok:['bok','已核对'],issue:['bi','件数异常']};
   var bd=sm[d.status]||sm.pending;
-  var pct=(d.actualPcs!==null&&d.actualPcs!==undefined)?Math.round(d.actualPcs/d.expectedPcs*100):0;
+  var pct=(d.actualPcs!==null&&d.actualPcs!==undefined&&d.expectedPcs)?Math.round(d.actualPcs/d.expectedPcs*100):0;
   var isI=d.status==='issue';
   var act=full?'<div class="ar">'+(d.status!=='ok'?'<button class="ab p" onclick="markOk(\''+d.id+'\')"><i class="ti ti-check"></i>标记已核对</button>':'')+'<button class="ab" onclick="openModal(\'domestic\',\''+d.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="ab d" onclick="delRecord(\'domestic\',\''+d.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
   var detail=full
-    ?'<hr class="div"><div class="mr"><div class="mi">取件码<strong style="'+(d.pickupCode?'':'color:#c0392b')+'">'+(d.pickupCode||'⚠ 未填写')+'</strong></div><div class="mi">应收<strong>'+d.expectedPcs+' 件</strong></div><div class="mi">实收<strong style="'+(isI?'color:#c0392b':'')+'">'+(d.actualPcs!==null&&d.actualPcs!==undefined?d.actualPcs+' 件':'——')+'</strong></div><div class="mi">到站<strong>'+(d.arrivalDate||'——')+'</strong></div></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="pb"><div class="pbar"><div class="pfill '+(isI?'red':'')+'" style="width:'+pct+'%"></div></div><div class="pt2">核对完成度 '+pct+'%'+(isI?' · 缺少 '+(d.expectedPcs-d.actualPcs)+' 件':'')+'</div></div>':'')+(d.notes?'<div class="nb '+(isI?'warn':'')+'">备注：'+d.notes+'</div>':'')
-    :'<div class="mr" style="margin-top:8px"><div class="mi">应收 <strong>'+d.expectedPcs+'</strong> 件</div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="mi" style="'+(isI?'color:#c0392b':'')+'">实收 <strong>'+d.actualPcs+'</strong> 件</div>':'')+'</div>';
-  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-building-store" style="font-size:13px;margin-right:5px"></i>'+d.supplier+'<span class="cid">'+d.id+'</span></div><div class="cs">关联：'+d.ref+' · 驿站：'+d.station+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+    ?'<hr class="div"><div class="mr"><div class="mi">取件码<strong style="'+(d.pickupCode?'':'color:#c0392b')+'">'+(d.pickupCode||'⚠ 未填写')+'</strong></div><div class="mi">应收<strong>'+(d.expectedPcs||0)+' 件</strong></div><div class="mi">实收<strong style="'+(isI?'color:#c0392b':'')+'">'+(d.actualPcs!==null&&d.actualPcs!==undefined?d.actualPcs+' 件':'——')+'</strong></div><div class="mi">到站<strong>'+(d.arrivalDate||'——')+'</strong></div></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="pb"><div class="pbar"><div class="pfill '+(isI?'red':'')+'" style="width:'+pct+'%"></div></div><div class="pt2">核对完成度 '+pct+'%'+(isI?' · 缺少 '+(d.expectedPcs-d.actualPcs)+' 件':'')+'</div></div>':'')+(d.notes?'<div class="nb '+(isI?'warn':'')+'">备注：'+d.notes+'</div>':'')
+    :'<div class="mr" style="margin-top:8px"><div class="mi">应收 <strong>'+(d.expectedPcs||0)+'</strong> 件</div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="mi" style="'+(isI?'color:#c0392b':'')+'">实收 <strong>'+d.actualPcs+'</strong> 件</div>':'')+'</div>';
+  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-building-store" style="font-size:13px;margin-right:5px"></i>'+(d.supplier||'—')+'<span class="cid">'+d.id+'</span></div><div class="cs">关联：'+(d.ref||'—')+' · 驿站：'+(d.station||'—')+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
 }
 
-// ── Intl Card ──────────────────────────────────────────────────
 function intlCard(i,full){
   var sm={pending:['bp','待发货'],transit:['bt','运输中'],done:['bd','已签收'],issue:['bi','异常']};
   var bd=sm[i.status]||sm.pending;
@@ -457,23 +556,18 @@ function intlCard(i,full){
   var mn=!i.trackingNo;
   var act=full?'<div class="ar">'+(mn?'<button class="ab p" onclick="inputTracking(\''+i.id+'\')"><i class="ti ti-input-search"></i>录入运单号</button>':'')+'<button class="ab" onclick="openModal(\'international\',\''+i.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="ab d" onclick="delRecord(\'international\',\''+i.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
   var detail=full
-    ?'<div class="step-track">'+sh+'</div><hr class="div"><div class="mr"><div class="mi">承运商<strong>'+i.carrier+'</strong></div><div class="mi">运单号<strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 未获取')+'</strong></div><div class="mi">发货日<strong>'+(i.shipDate||'——')+'</strong></div><div class="mi">预计到达<strong>'+i.eta+'</strong></div></div>'+(i.lastUpdate?'<div class="nb">'+i.lastUpdate+'</div>':'')+(i.notes?'<div class="nb">'+i.notes+'</div>':'')
-    :'<div class="mr" style="margin-top:8px"><div class="mi">'+i.carrier+' <strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 运单号缺失')+'</strong></div><div class="mi">ETA <strong>'+i.eta+'</strong></div></div>';
-  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-plane" style="font-size:13px;margin-right:5px"></i>'+i.origin+' → '+i.dest+'<span class="cid">'+i.id+'</span></div><div class="cs">关联：'+i.ref+' · '+i.forwarder+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+    ?'<div class="step-track">'+sh+'</div><hr class="div"><div class="mr"><div class="mi">承运商<strong>'+(i.carrier||'—')+'</strong></div><div class="mi">运单号<strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 未获取')+'</strong></div><div class="mi">发货日<strong>'+(i.shipDate||'——')+'</strong></div><div class="mi">预计到达<strong>'+(i.eta||'——')+'</strong></div></div>'+(i.lastUpdate?'<div class="nb">'+i.lastUpdate+'</div>':'')+(i.notes?'<div class="nb">'+i.notes+'</div>':'')
+    :'<div class="mr" style="margin-top:8px"><div class="mi">'+(i.carrier||'—')+' <strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 运单号缺失')+'</strong></div><div class="mi">ETA <strong>'+(i.eta||'—')+'</strong></div></div>';
+  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-plane" style="font-size:13px;margin-right:5px"></i>'+(i.origin||'—')+' → '+(i.dest||'—')+'<span class="cid">'+i.id+'</span></div><div class="cs">关联：'+(i.ref||'—')+' · '+(i.forwarder||'—')+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
 }
 
-// ── Supplier ───────────────────────────────────────────────────
-function getAllTags(){
+// ── Suppliers ──────────────────────────────────────────────────
+function renderTagBar(){
   var tags={};
   data.suppliers.forEach(function(s){(s.tags||[]).forEach(function(t){tags[t]=(tags[t]||0)+1;});});
-  return tags;
-}
-function renderTagBar(){
-  var tags=getAllTags();
-  var el=document.getElementById('tag-filter-bar');
-  if(!el)return;
+  var el=document.getElementById('tag-filter-bar');if(!el)return;
   el.innerHTML=Object.keys(tags).map(function(t){
-    return '<span class="tag'+(activeTagFilter===t?' active':'')+'" onclick="toggleTagF(\''+t+'\')" style="cursor:pointer">'+t+' <span style="opacity:.6">'+tags[t]+'</span></span>';
+    return '<span class="tag'+(activeTagFilter===t?' active':'')+'" onclick="toggleTagF(\''+t+'\')">'+t+' <span style="opacity:.6">'+tags[t]+'</span></span>';
   }).join('');
 }
 function toggleTagF(t){activeTagFilter=activeTagFilter===t?null:t;renderSuppliers();}
@@ -485,30 +579,31 @@ function renderSuppliers(){
     var mt=!activeTagFilter||(s.tags||[]).includes(activeTagFilter);
     return mq&&mt;
   });
-  var el=document.getElementById('supplier-list');
-  if(!el)return;
+  var el=document.getElementById('supplier-list');if(!el)return;
   el.innerHTML=list.map(function(s){return supCard(s);}).join('')||'<div class="empty"><i class="ti ti-building-factory-2"></i>暂无供应商</div>';
 }
+
 function supCard(s){
   var init=s.name?s.name.charAt(0):'?';
   var tags=(s.tags||[]).map(function(t){return '<span class="tag">'+t+'</span>';}).join('');
   var prods=(s.products||[]).map(function(p){
-    return '<div class="prod-item">'+(p.image?'<img src="'+p.image+'" onclick="openLightbox(this.src)">':'<div style="height:80px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text3)"><i class="ti ti-photo" style="font-size:24px"></i></div>')+'<div class="prod-info"><div class="prod-name">'+p.name+'</div><div class="prod-price">'+(p.price?'¥'+p.price:'')+'</div>'+(p.note?'<div style="font-size:10px;color:var(--text3)">'+p.note+'</div>':'')+'</div></div>';
+    return '<div class="prod-item">'+(p.image?'<img src="'+p.image+'" onclick="openLightbox(this.src)">':'<div style="height:80px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text3)"><i class="ti ti-photo" style="font-size:24px"></i></div>')+'<div class="prod-info"><div class="prod-name">'+(p.name||'')+'</div><div class="prod-price">'+(p.price?'¥'+p.price:'')+'</div>'+(p.note?'<div style="font-size:10px;color:var(--text3)">'+p.note+'</div>':'')+'</div></div>';
   }).join('');
   return '<div class="sup-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="display:flex;align-items:flex-start"><div class="sup-av">'+init+'</div><div><div style="font-size:15px;font-weight:600">'+s.name+'</div><div class="sup-contact">'+(s.contact?'<span><i class="ti ti-user" style="font-size:12px;margin-right:3px"></i>'+s.contact+'</span>':'')+(s.phone?'<span><i class="ti ti-phone" style="font-size:12px;margin-right:3px"></i>'+s.phone+'</span>':'')+(s.wechat?'<span><i class="ti ti-brand-wechat" style="font-size:12px;margin-right:3px"></i>'+s.wechat+'</span>':'')+(s.city?'<span><i class="ti ti-map-pin" style="font-size:12px;margin-right:3px"></i>'+s.city+'</span>':'')+(s.shopUrl?'<a href="'+s.shopUrl+'" target="_blank"><i class="ti ti-external-link" style="font-size:12px;margin-right:3px"></i>店铺</a>':'')+'</div>'+(tags?'<div style="margin-top:6px">'+tags+'</div>':'')+'</div></div><div class="ar" style="margin-top:0"><button class="ab" onclick="openModal(\'supplier\',\''+s.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="ab" onclick="openAddProduct(\''+s.id+'\')"><i class="ti ti-photo-plus"></i>加产品</button><button class="ab d" onclick="delRecord(\'suppliers\',\''+s.id+'\')"><i class="ti ti-trash"></i>删除</button></div></div>'+(s.notes?'<div class="nb" style="margin-top:8px">'+s.notes+'</div>':'')+(prods?'<div class="prod-grid">'+prods+'</div>':'')+'</div>';
 }
 
 // ── Actions ────────────────────────────────────────────────────
 function toggleConfirm(id){
-  var p=data.purchase.find(function(x){return x.id===id;});
-  if(!p)return;
-  if(p.status==='confirmed'){p.status='pending';persist();return;}
+  var p=data.purchase.find(function(x){return x.id===id;});if(!p)return;
+  if(p.status==='confirmed'){p.status='pending';persistDoc('purchase',p);return;}
   p.status='confirmed';
   var exists=data.domestic.find(function(d){return d.ref===p.id;});
   if(!exists){
-    data.domestic.push({id:'D'+String(data.domestic.length+1).padStart(3,'0'),ref:p.id,supplier:p.supplier,station:'',pickupCode:'',arrivalDate:'',expectedPcs:p.qty,actualPcs:null,status:'pending',notes:'由采购 '+p.id+' 自动创建'});
+    var nd={id:'D'+String(data.domestic.length+1).padStart(3,'0'),ref:p.id,supplier:p.supplier,station:'',pickupCode:'',arrivalDate:'',expectedPcs:p.qty,actualPcs:null,status:'pending',notes:'由采购 '+p.id+' 自动创建'};
+    data.domestic.push(nd);
+    persistDoc('purchase',p);
+    persistDoc('domestic',nd);
     toast('已确认付款，国内发货记录已自动创建');
-    persist();
     setTimeout(function(){
       document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
       document.querySelectorAll('.page').forEach(function(t){t.classList.remove('active');});
@@ -516,92 +611,91 @@ function toggleConfirm(id){
       document.querySelectorAll('.nav-btn')[2].classList.add('active');
       renderAll();
     },1200);
-  } else {persist();toast('已确认付款');}
+  } else {persistDoc('purchase',p);toast('已确认付款');}
 }
+
 function markOk(id){
-  var d=data.domestic.find(function(x){return x.id===id;});
-  if(!d)return;d.status='ok';persist();
+  var d=data.domestic.find(function(x){return x.id===id;});if(!d)return;
+  d.status='ok';persistDoc('domestic',d);
 }
+
 function inputTracking(id){
-  var no=prompt('请输入货代提供的运单号：');
-  if(!no||!no.trim())return;
-  var i=data.international.find(function(x){return x.id===id;});
-  if(!i)return;
-  i.trackingNo=no.trim();i.status='transit';persist();toast('运单号已保存');
+  var no=prompt('请输入货代提供的运单号：');if(!no||!no.trim())return;
+  var i=data.international.find(function(x){return x.id===id;});if(!i)return;
+  i.trackingNo=no.trim();i.status='transit';
+  persistDoc('international',i);toast('运单号已保存');
 }
+
 function delRecord(col,id){
   if(!confirm('确定要删除吗？'))return;
-  data[col]=data[col].filter(function(x){return x.id!==id;});
-  persist();toast('已删除');
+  deleteDoc(col,id);toast('已删除');
 }
 
 // ── Modal ──────────────────────────────────────────────────────
-function openModal(type,editId){try{
-  currentModal={type:type,editId:editId||null};
-  var titles={purchase:editId?'编辑采购需求':'新建采购需求',domestic:editId?'更新发货信息':'录入国内发货',international:editId?'更新运单信息':'新增国际运单',supplier:editId?'编辑供应商':'新增供应商',addProduct:'添加产品'};
-  document.getElementById('modal-t').textContent=titles[type]||type;
-  var e={};
-  if(editId){
-    if(type==='purchase')e=data.purchase.find(function(x){return x.id===editId;})||{};
-    if(type==='domestic')e=data.domestic.find(function(x){return x.id===editId;})||{};
-    if(type==='international')e=data.international.find(function(x){return x.id===editId;})||{};
-    if(type==='supplier')e=data.suppliers.find(function(x){return x.id===editId;})||{};
-  }
-  mImgs=(e.images||[]).slice();
-  mSupReceipts=(e.supplierReceipts||[]).slice();
-  mCustReceipts=(e.customerReceipts||[]).slice();
-  mProdImg=null;
-  var supOptions=data.suppliers.map(function(s){return '<option value="'+s.name+'">';}).join('');
-  var h='';
-  if(type==='purchase'){
-    var sz=e.sizes?Object.entries(e.sizes).map(function(kv){return kv[0]+':'+kv[1];}).join(','):'';
-    h='<div class="fg"><label class="fl">产品名称 *</label><input id="f-product" type="text" value="'+(e.product||'')+'"></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" list="sup-opts" value="'+(e.supplier||'')+'"><datalist id="sup-opts">'+supOptions+'</datalist></div></div>'
-      +'<div class="fg"><label class="fl">尺码分配（S:5,M:8,L:6 可不填）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">总数量（不按尺码时填）</label><input id="f-qty" type="number" placeholder="0" value="'+(e.directQty||e.qty||'')+'"></div><div class="fg"><label class="fl">颜色</label><input id="f-color" type="text" value="'+(e.color||'')+'"></div></div>'
-      +'<div class="fg"><label class="fl">截止日期</label><input id="f-deadline" type="date" value="'+(e.deadline||'')+'"></div>'
-      +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>'
-      +'<div class="fg"><label class="fl">商品图片</label><div class="upload-box" onclick="document.getElementById(\'f-imgs\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-imgs" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'main\')"><div class="img-prev" id="prev-main">'+buildPrev(mImgs,'main')+'</div></div>'
-      +'<hr style="border:none;border-top:.5px solid var(--border);margin:14px 0">'
-      +'<div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px">💰 财务信息</div>'
-      +'<div class="fr"><div class="fg"><label class="fl">供应商付款金额（¥）</label><input id="f-sAmt" type="number" placeholder="0.00" value="'+(e.supplierAmount||'')+'"></div><div class="fg"><label class="fl">供应商付款状态</label><select id="f-sSt"><option value="unpaid"'+((e.supplierPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待付款</option><option value="paid"'+(e.supplierPayStatus==='paid'?' selected':'')+'>已付款</option><option value="partial"'+(e.supplierPayStatus==='partial'?' selected':'')+'>部分付</option></select></div></div>'
-      +'<div class="fg"><label class="fl">供应商付款截图</label><div class="upload-box" onclick="document.getElementById(\'f-sr\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传付款凭证</div><input id="f-sr" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'sup\')"><div class="img-prev" id="prev-sup">'+buildPrev(mSupReceipts,'sup')+'</div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">客户收款金额（$）</label><input id="f-cAmt" type="number" placeholder="0.00" value="'+(e.customerAmount||'')+'"></div><div class="fg"><label class="fl">客户收款状态</label><select id="f-cSt"><option value="unpaid"'+((e.customerPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待收款</option><option value="paid"'+(e.customerPayStatus==='paid'?' selected':'')+'>已收款</option><option value="partial"'+(e.customerPayStatus==='partial'?' selected':'')+'>部分收</option></select></div></div>'
-      +'<div class="fg"><label class="fl">客户收款截图</label><div class="upload-box" onclick="document.getElementById(\'f-cr\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传收款截图</div><input id="f-cr" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'cust\')"><div class="img-prev" id="prev-cust">'+buildPrev(mCustReceipts,'cust')+'</div></div>';
-  } else if(type==='domestic'){
-    h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
-      +'<div class="fg"><label class="fl">菜鸟驿站</label><input id="f-station" type="text" value="'+(e.station||'')+'"></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">取件码</label><input id="f-pickupCode" type="text" value="'+(e.pickupCode||'')+'"></div><div class="fg"><label class="fl">到站日期</label><input id="f-arrivalDate" type="date" value="'+(e.arrivalDate||'')+'"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">应收件数</label><input id="f-expectedPcs" type="number" value="'+(e.expectedPcs||'')+'"></div><div class="fg"><label class="fl">实收件数</label><input id="f-actualPcs" type="number" value="'+(e.actualPcs!==null&&e.actualPcs!==undefined?e.actualPcs:'')+'"></div></div>'
-      +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
-  } else if(type==='international'){
-    var cars=['DHL','FedEx','UPS','EMS','顺丰国际','其他'];
-    var co=cars.map(function(c){return '<option'+((e.carrier||'DHL')===c?' selected':'')+'>'+c+'</option>';}).join('');
-    var sts=[{v:'pending',l:'待发货'},{v:'transit',l:'运输中'},{v:'done',l:'已签收'},{v:'issue',l:'异常'}];
-    var so=sts.map(function(s){return '<option value="'+s.v+'"'+((e.status||'pending')===s.v?' selected':'')+'>'+s.l+'</option>';}).join('');
-    h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">货代公司</label><input id="f-forwarder" type="text" value="'+(e.forwarder||'')+'"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">承运商</label><select id="f-carrier">'+co+'</select></div><div class="fg"><label class="fl">运单号</label><input id="f-trackingNo" type="text" value="'+(e.trackingNo||'')+'"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">出发城市</label><input id="f-origin" type="text" value="'+(e.origin||'')+'"></div><div class="fg"><label class="fl">目的地</label><input id="f-dest" type="text" value="'+(e.dest||'')+'"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">发货日期</label><input id="f-shipDate" type="date" value="'+(e.shipDate||'')+'"></div><div class="fg"><label class="fl">预计到达</label><input id="f-eta" type="date" value="'+(e.eta||'')+'"></div></div>'
-      +'<div class="fg"><label class="fl">当前状态</label><select id="f-status">'+so+'</select></div>'
-      +'<div class="fg"><label class="fl">最新动态</label><input id="f-lastUpdate" type="text" value="'+(e.lastUpdate||'')+'"></div>'
-      +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
-  } else if(type==='supplier'){
-    var existTags=e.tags||[];
-    h='<div class="fg"><label class="fl">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="fg"><label class="fl">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="fg"><label class="fl">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
-      +'<div class="fg"><label class="fl">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
-      +'<div class="fg"><label class="fl">标签（输入后回车添加）</label><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px;background:var(--surface2);border:.5px solid var(--border2);border-radius:8px;min-height:40px" id="tag-row">'+existTags.map(function(t){return '<span class="tag active" onclick="this.remove()">'+t+' ×</span>';}).join('')+'<input class="tag-input" id="tag-inp" placeholder="输入标签后回车" onkeydown="addTag(event)" style="border:none;background:transparent;outline:none;flex:1;min-width:80px"></div></div>'
-      +'<div class="fg"><label class="fl">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
-  } else if(type==='addProduct'){
-    h='<div class="fg"><label class="fl">产品名称</label><input id="f-pname" type="text" placeholder="如：LV黑色运动鞋"></div>'
-      +'<div class="fr"><div class="fg"><label class="fl">价格（¥）</label><input id="f-pprice" type="number" placeholder="0"></div><div class="fg"><label class="fl">备注（尺码/颜色等）</label><input id="f-pnote" type="text"></div></div>'
-      +'<div class="fg"><label class="fl">产品图片</label><div class="upload-box" onclick="document.getElementById(\'f-pimg\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>上传产品图</div><input id="f-pimg" type="file" accept="image/*" style="display:none" onchange="handleProdImg(this)"><div id="pimg-prev" style="margin-top:8px"></div></div>';
-  }
-  document.getElementById('modal-body').innerHTML=h;
-  document.getElementById('modal-ov').classList.add('open');
-}catch(e){console.error('openModal error',e);alert('打开表单出错：'+e.message);}}
+function openModal(type,editId){
+  try{
+    currentModal={type:type,editId:editId||null};
+    var titles={purchase:editId?'编辑采购需求':'新建采购需求',domestic:editId?'更新发货信息':'录入国内发货',international:editId?'更新运单信息':'新增国际运单',supplier:editId?'编辑供应商':'新增供应商',addProduct:'添加产品'};
+    document.getElementById('modal-t').textContent=titles[type]||type;
+    var e={};
+    if(editId){
+      if(type==='purchase')e=data.purchase.find(function(x){return x.id===editId;})||{};
+      if(type==='domestic')e=data.domestic.find(function(x){return x.id===editId;})||{};
+      if(type==='international')e=data.international.find(function(x){return x.id===editId;})||{};
+      if(type==='supplier')e=data.suppliers.find(function(x){return x.id===editId;})||{};
+    }
+    mImgs=(e.images||[]).slice();
+    mSupReceipts=(e.supplierReceipts||[]).slice();
+    mCustReceipts=(e.customerReceipts||[]).slice();
+    mProdImg=null;
+    var supOptions=data.suppliers.map(function(s){return '<option value="'+s.name+'">';}).join('');
+    var h='';
+    if(type==='purchase'){
+      var sz=e.sizes?Object.entries(e.sizes).map(function(kv){return kv[0]+':'+kv[1];}).join(','):'';
+      h='<div class="fg"><label class="fl">产品名称 *</label><input id="f-product" type="text" value="'+(e.product||'')+'"></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" list="sup-opts" value="'+(e.supplier||'')+'"><datalist id="sup-opts">'+supOptions+'</datalist></div></div>'
+        +'<div class="fg"><label class="fl">尺码分配（S:5,M:8,L:6 可不填）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">总数量</label><input id="f-qty" type="number" placeholder="0" value="'+(e.directQty||e.qty||'')+'"></div><div class="fg"><label class="fl">颜色</label><input id="f-color" type="text" value="'+(e.color||'')+'"></div></div>'
+        +'<div class="fg"><label class="fl">截止日期</label><input id="f-deadline" type="date" value="'+(e.deadline||'')+'"></div>'
+        +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>'
+        +'<div class="fg"><label class="fl">商品图片</label><div class="upload-box" onclick="document.getElementById(\'f-imgs\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-imgs" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'main\')"><div class="img-prev" id="prev-main">'+buildPrev(mImgs,'main')+'</div></div>'
+        +'<hr style="border:none;border-top:.5px solid var(--border);margin:14px 0">'
+        +'<div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px">💰 财务信息</div>'
+        +'<div class="fr"><div class="fg"><label class="fl">供应商付款金额（¥）</label><input id="f-sAmt" type="number" placeholder="0.00" value="'+(e.supplierAmount||'')+'"></div><div class="fg"><label class="fl">供应商付款状态</label><select id="f-sSt"><option value="unpaid"'+((e.supplierPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待付款</option><option value="paid"'+(e.supplierPayStatus==='paid'?' selected':'')+'>已付款</option><option value="partial"'+(e.supplierPayStatus==='partial'?' selected':'')+'>部分付</option></select></div></div>'
+        +'<div class="fg"><label class="fl">供应商付款截图</label><div class="upload-box" onclick="document.getElementById(\'f-sr\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传付款凭证</div><input id="f-sr" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'sup\')"><div class="img-prev" id="prev-sup">'+buildPrev(mSupReceipts,'sup')+'</div></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">客户收款金额（$）</label><input id="f-cAmt" type="number" placeholder="0.00" value="'+(e.customerAmount||'')+'"></div><div class="fg"><label class="fl">客户收款状态</label><select id="f-cSt"><option value="unpaid"'+((e.customerPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待收款</option><option value="paid"'+(e.customerPayStatus==='paid'?' selected':'')+'>已收款</option><option value="partial"'+(e.customerPayStatus==='partial'?' selected':'')+'>部分收</option></select></div></div>'
+        +'<div class="fg"><label class="fl">客户收款截图</label><div class="upload-box" onclick="document.getElementById(\'f-cr\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传收款截图</div><input id="f-cr" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'cust\')"><div class="img-prev" id="prev-cust">'+buildPrev(mCustReceipts,'cust')+'</div></div>';
+    } else if(type==='domestic'){
+      h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
+        +'<div class="fg"><label class="fl">菜鸟驿站</label><input id="f-station" type="text" value="'+(e.station||'')+'"></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">取件码</label><input id="f-pickupCode" type="text" value="'+(e.pickupCode||'')+'"></div><div class="fg"><label class="fl">到站日期</label><input id="f-arrivalDate" type="date" value="'+(e.arrivalDate||'')+'"></div></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">应收件数</label><input id="f-expectedPcs" type="number" value="'+(e.expectedPcs||'')+'"></div><div class="fg"><label class="fl">实收件数</label><input id="f-actualPcs" type="number" value="'+(e.actualPcs!==null&&e.actualPcs!==undefined?e.actualPcs:'')+'"></div></div>'
+        +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
+    } else if(type==='international'){
+      var cars=['DHL','FedEx','UPS','EMS','顺丰国际','其他'];
+      var co=cars.map(function(c){return '<option'+((e.carrier||'DHL')===c?' selected':'')+'>'+c+'</option>';}).join('');
+      var sts=[{v:'pending',l:'待发货'},{v:'transit',l:'运输中'},{v:'done',l:'已签收'},{v:'issue',l:'异常'}];
+      var so=sts.map(function(s){return '<option value="'+s.v+'"'+((e.status||'pending')===s.v?' selected':'')+'>'+s.l+'</option>';}).join('');
+      h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">货代公司</label><input id="f-forwarder" type="text" value="'+(e.forwarder||'')+'"></div></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">承运商</label><select id="f-carrier">'+co+'</select></div><div class="fg"><label class="fl">运单号</label><input id="f-trackingNo" type="text" value="'+(e.trackingNo||'')+'"></div></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">出发城市</label><input id="f-origin" type="text" value="'+(e.origin||'')+'"></div><div class="fg"><label class="fl">目的地</label><input id="f-dest" type="text" value="'+(e.dest||'')+'"></div></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">发货日期</label><input id="f-shipDate" type="date" value="'+(e.shipDate||'')+'"></div><div class="fg"><label class="fl">预计到达</label><input id="f-eta" type="date" value="'+(e.eta||'')+'"></div></div>'
+        +'<div class="fg"><label class="fl">当前状态</label><select id="f-status">'+so+'</select></div>'
+        +'<div class="fg"><label class="fl">最新动态</label><input id="f-lastUpdate" type="text" value="'+(e.lastUpdate||'')+'"></div>'
+        +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
+    } else if(type==='supplier'){
+      var existTags=e.tags||[];
+      h='<div class="fg"><label class="fl">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="fg"><label class="fl">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
+        +'<div class="fr"><div class="fg"><label class="fl">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="fg"><label class="fl">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
+        +'<div class="fg"><label class="fl">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
+        +'<div class="fg"><label class="fl">标签（输入后回车添加）</label><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px;background:var(--surface2);border:.5px solid var(--border2);border-radius:8px;min-height:40px" id="tag-row">'+existTags.map(function(t){return '<span class="tag active" onclick="this.remove()">'+t+' ×</span>';}).join('')+'<input class="tag-input" id="tag-inp" placeholder="输入标签后回车" onkeydown="addTag(event)"></div></div>'
+        +'<div class="fg"><label class="fl">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
+    }
+    document.getElementById('modal-body').innerHTML=h;
+    document.getElementById('modal-ov').classList.add('open');
+  }catch(e){console.error('openModal error',e);}
+}
 
 function closeModal(){document.getElementById('modal-ov').classList.remove('open');currentModal=null;}
 
@@ -611,10 +705,10 @@ function buildPrev(imgs,key){
 function handleImgs(input,key){
   Array.from(input.files).forEach(function(file){
     var r=new FileReader();
-    r.onload=function(e){
-      if(key==='main'){mImgs.push(e.target.result);var el=document.getElementById('prev-main');if(el)el.innerHTML=buildPrev(mImgs,'main');}
-      else if(key==='sup'){mSupReceipts.push(e.target.result);var el=document.getElementById('prev-sup');if(el)el.innerHTML=buildPrev(mSupReceipts,'sup');}
-      else if(key==='cust'){mCustReceipts.push(e.target.result);var el=document.getElementById('prev-cust');if(el)el.innerHTML=buildPrev(mCustReceipts,'cust');}
+    r.onload=function(ev){
+      if(key==='main'){mImgs.push(ev.target.result);var el=document.getElementById('prev-main');if(el)el.innerHTML=buildPrev(mImgs,'main');}
+      else if(key==='sup'){mSupReceipts.push(ev.target.result);var el=document.getElementById('prev-sup');if(el)el.innerHTML=buildPrev(mSupReceipts,'sup');}
+      else if(key==='cust'){mCustReceipts.push(ev.target.result);var el=document.getElementById('prev-cust');if(el)el.innerHTML=buildPrev(mCustReceipts,'cust');}
     };r.readAsDataURL(file);
   });input.value='';
 }
@@ -631,55 +725,59 @@ function handleProdImg(input){
 }
 function addTag(e){
   if(e.key!=='Enter')return;e.preventDefault();
-  var inp=document.getElementById('tag-inp');
-  var val=inp.value.trim();if(!val)return;
+  var inp=document.getElementById('tag-inp');var val=inp.value.trim();if(!val)return;
   var row=document.getElementById('tag-row');
-  var span=document.createElement('span');
-  span.className='tag active';span.onclick=function(){this.remove();};
+  var span=document.createElement('span');span.className='tag active';span.onclick=function(){this.remove();};
   span.textContent=val+' ×';row.insertBefore(span,inp);inp.value='';
 }
-
 function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
-function saveModal(){try{
-  var type=currentModal.type, editId=currentModal.editId;
-  if(type==='addProduct'){
-    var s=data.suppliers.find(function(x){return x.id===editId;});
-    if(s){if(!s.products)s.products=[];s.products.push({name:g('f-pname'),price:parseFloat(g('f-pprice'))||0,note:g('f-pnote'),image:mProdImg||''});}
-    persist();closeModal();toast('产品已添加');return;
-  }
-  if(type==='supplier'){
-    var tags=Array.from(document.querySelectorAll('#tag-row .tag.active')).map(function(el){return el.textContent.replace(' ×','').trim();});
-    if(editId){
-      var sv=data.suppliers.find(function(x){return x.id===editId;});
-      Object.assign(sv,{name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes')});
-    } else {
-      data.suppliers.push({id:'S'+String(data.suppliers.length+1).padStart(3,'0'),name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes'),products:[]});
+function saveModal(){
+  try{
+    var type=currentModal.type,editId=currentModal.editId;
+    if(type==='addProduct'){
+      var s=data.suppliers.find(function(x){return x.id===editId;});
+      if(s){if(!s.products)s.products=[];s.products.push({name:g('f-pname'),price:parseFloat(g('f-pprice'))||0,note:g('f-pnote'),image:mProdImg||''});}
+      persistDoc('suppliers',s);closeModal();toast('产品已添加');return;
     }
-    persist();closeModal();toast('已保存');return;
-  }
-  if(type==='purchase'){
-    var sz=g('f-sizes'),sizes={};
-    sz.split(',').forEach(function(s){var p=s.split(':');if(p[0]&&p[1])sizes[p[0].trim()]=parseInt(p[1])||0;});
-    var dqty=parseInt(g('f-qty'))||0;
-    var qty=Object.keys(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):dqty;
-    var obj={product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:dqty,deadline:g('f-deadline'),notes:g('f-notes'),images:mImgs.slice(),supplierAmount:parseFloat(g('f-sAmt'))||0,supplierPayStatus:document.getElementById('f-sSt').value,supplierReceipts:mSupReceipts.slice(),customerAmount:parseFloat(g('f-cAmt'))||0,customerPayStatus:document.getElementById('f-cSt').value,customerReceipts:mCustReceipts.slice()};
-    if(editId){Object.assign(data.purchase.find(function(x){return x.id===editId;}),obj);}
-    else{obj.id='P'+String(data.purchase.length+1).padStart(3,'0');obj.status='pending';data.purchase.push(obj);}
-  } else if(type==='domestic'){
-    var exp=parseInt(g('f-expectedPcs'))||0,ar=g('f-actualPcs'),act=ar!==''?parseInt(ar):null;
-    var st=act!==null?(act<exp?'issue':'ok'):'pending';
-    var obj={ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')};
-    if(editId){Object.assign(data.domestic.find(function(x){return x.id===editId;}),obj);}
-    else{obj.id='D'+String(data.domestic.length+1).padStart(3,'0');data.domestic.push(obj);}
-  } else if(type==='international'){
-    var car=document.getElementById('f-carrier').value,ist=document.getElementById('f-status').value;
-    var obj={ref:g('f-ref'),forwarder:g('f-forwarder'),carrier:car,trackingNo:g('f-trackingNo'),origin:g('f-origin'),dest:g('f-dest'),shipDate:g('f-shipDate'),eta:g('f-eta'),status:ist,lastUpdate:g('f-lastUpdate'),notes:g('f-notes')};
-    if(editId){Object.assign(data.international.find(function(x){return x.id===editId;}),obj);}
-    else{obj.id='I'+String(data.international.length+1).padStart(3,'0');data.international.push(obj);}
-  }
-  persist();closeModal();toast('已保存');
-}catch(e){console.error('saveModal error',e);alert('保存出错：'+e.message);}}
+    if(type==='supplier'){
+      var tags=Array.from(document.querySelectorAll('#tag-row .tag.active')).map(function(el){return el.textContent.replace(' ×','').trim();});
+      if(editId){
+        var sv=data.suppliers.find(function(x){return x.id===editId;});
+        Object.assign(sv,{name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes')});
+        persistDoc('suppliers',sv);
+      } else {
+        var ns={id:'S'+String(data.suppliers.length+1).padStart(3,'0'),name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes'),products:[]};
+        data.suppliers.push(ns);persistDoc('suppliers',ns);
+      }
+      closeModal();toast('已保存');return;
+    }
+    if(type==='purchase'){
+      var sz=g('f-sizes'),sizes={};
+      sz.split(',').forEach(function(s){var p=s.split(':');if(p[0]&&p[1])sizes[p[0].trim()]=parseInt(p[1])||0;});
+      var dqty=parseInt(g('f-qty'))||0;
+      var qty=Object.keys(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):dqty;
+      var obj={product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:dqty,deadline:g('f-deadline'),notes:g('f-notes'),images:mImgs.slice(),supplierAmount:parseFloat(g('f-sAmt'))||0,supplierPayStatus:document.getElementById('f-sSt').value,supplierReceipts:mSupReceipts.slice(),customerAmount:parseFloat(g('f-cAmt'))||0,customerPayStatus:document.getElementById('f-cSt').value,customerReceipts:mCustReceipts.slice()};
+      if(editId){Object.assign(data.purchase.find(function(x){return x.id===editId;}),obj);obj=data.purchase.find(function(x){return x.id===editId;});}
+      else{obj.id='P'+String(data.purchase.length+1).padStart(3,'0');obj.status='pending';data.purchase.push(obj);}
+      persistDoc('purchase',obj);
+    } else if(type==='domestic'){
+      var exp=parseInt(g('f-expectedPcs'))||0,ar=g('f-actualPcs'),act=ar!==''?parseInt(ar):null;
+      var st=act!==null?(act<exp?'issue':'ok'):'pending';
+      var obj={ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')};
+      if(editId){Object.assign(data.domestic.find(function(x){return x.id===editId;}),obj);obj=data.domestic.find(function(x){return x.id===editId;});}
+      else{obj.id='D'+String(data.domestic.length+1).padStart(3,'0');data.domestic.push(obj);}
+      persistDoc('domestic',obj);
+    } else if(type==='international'){
+      var car=document.getElementById('f-carrier').value,ist=document.getElementById('f-status').value;
+      var obj={ref:g('f-ref'),forwarder:g('f-forwarder'),carrier:car,trackingNo:g('f-trackingNo'),origin:g('f-origin'),dest:g('f-dest'),shipDate:g('f-shipDate'),eta:g('f-eta'),status:ist,lastUpdate:g('f-lastUpdate'),notes:g('f-notes')};
+      if(editId){Object.assign(data.international.find(function(x){return x.id===editId;}),obj);obj=data.international.find(function(x){return x.id===editId;});}
+      else{obj.id='I'+String(data.international.length+1).padStart(3,'0');data.international.push(obj);}
+      persistDoc('international',obj);
+    }
+    closeModal();toast('已保存');
+  }catch(e){console.error('saveModal error',e);alert('保存出错：'+e.message);}
+}
 
 function openAddProduct(sid){
   currentModal={type:'addProduct',editId:sid};
@@ -704,11 +802,24 @@ function importData(){
     r.onload=function(ev){
       try{
         var imp=JSON.parse(ev.target.result);
-        if(!imp.purchase)throw new Error();
+        if(!imp.purchase)throw new Error('格式错误');
         if(!confirm('导入将覆盖当前所有数据，确定吗？'))return;
         data=imp;if(!data.suppliers)data.suppliers=[];
-        saveLocal();if(useCloud)pushCloud();renderAll();toast('导入成功');
-      }catch(err){alert('文件格式错误');}
+        saveLocal();
+        if(useCloud&&fbApiKey&&fbProjectId){
+          toast('正在同步到云端...');
+          var cols=['purchase','domestic','international','suppliers'];
+          cols.forEach(function(col){
+            (data[col]||[]).forEach(function(item){
+              if(item&&item.id)fbSetDoc(col,item.id,item).catch(function(e){console.error(e);});
+            });
+          });
+          setTimeout(function(){setSS('ok','已同步');toast('导入并同步完成');},2000);
+        } else {
+          toast('导入成功');
+        }
+        renderAll();
+      }catch(err){alert('文件格式错误：'+err.message);}
     };r.readAsText(file);
   };inp.click();
 }
