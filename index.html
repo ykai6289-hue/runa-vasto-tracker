@@ -6,892 +6,687 @@
 <title>跨境货物追踪系统 — Runa Vasto</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.9.0/dist/tabler-icons.min.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #f5f4f0; --surface: #ffffff; --surface2: #f0ede8;
-  --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
-  --text: #1a1a18; --text2: #5f5e5a; --text3: #999894;
-  --accent: #1a6b4a; --accent-bg: #e1f5ee;
-  --radius: 10px; --radius-lg: 14px;
-}
-body { font-family: -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-.app-shell { display: flex; height: 100vh; overflow: hidden; }
-.sidebar { width: 220px; background: var(--surface); border-right: 0.5px solid var(--border); display: flex; flex-direction: column; padding: 1.5rem 1rem; gap: 4px; flex-shrink: 0; }
-.logo { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1.5rem; padding: 0 8px; display: flex; align-items: center; gap: 8px; }
-.logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: var(--text2); transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; }
-.nav-item:hover { background: var(--surface2); color: var(--text); }
-.nav-item.active { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
-.nav-item i { font-size: 16px; }
-.nav-section { font-size: 10px; letter-spacing: 0.08em; color: var(--text3); padding: 12px 10px 4px; text-transform: uppercase; }
-.sync-status { margin-top: auto; padding: 8px 10px; font-size: 11px; display: flex; align-items: center; gap: 6px; }
-.sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
-.sync-dot.ok { background: var(--accent); }
-.sync-dot.err { background: #c0392b; }
-.sync-dot.pulse { background: #f0a500; animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.main { flex: 1; overflow-y: auto; padding: 2rem; }
-.page { display: none; }
-.page.active { display: block; }
-.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.page-title { font-size: 20px; font-weight: 600; }
-.page-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
-.header-actions { display: flex; gap: 8px; align-items: center; }
-.add-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; transition: opacity 0.15s; }
-.add-btn:hover { opacity: 0.85; }
-.icon-btn { display: flex; align-items: center; gap: 5px; padding: 7px 12px; background: var(--surface); border: 0.5px solid var(--border2); border-radius: 8px; font-size: 12px; color: var(--text2); cursor: pointer; }
-.icon-btn:hover { background: var(--surface2); }
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
-.stat-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; }
-.stat-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
-.stat-value { font-size: 26px; font-weight: 600; color: var(--text); }
-.stat-value.red { color: #c0392b; }
-.stat-value.green { color: var(--accent); }
-.stat-value.blue { color: #185fa5; }
-.alert-bar { background: #fef3cd; border: 0.5px solid #f0c040; border-radius: var(--radius); padding: 10px 14px; margin-bottom: 10px; font-size: 13px; color: #7a5200; display: flex; align-items: flex-start; gap: 8px; }
-.card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 10px; }
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.card-title { font-size: 14.5px; font-weight: 600; color: var(--text); }
-.card-id { font-size: 11px; color: var(--text3); font-weight: 400; margin-left: 6px; }
-.card-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
-.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-.badge-pending { background: #faeeda; color: #633806; }
-.badge-ok { background: #eaf3de; color: #27500a; }
-.badge-issue { background: #fce8e8; color: #791f1f; }
-.badge-transit { background: #e6f1fb; color: #0c447c; }
-.badge-done { background: #e1f5ee; color: #085041; }
-.badge-confirmed { background: #e1f5ee; color: #085041; }
-.divider { border: none; border-top: 0.5px solid var(--border); margin: 12px 0; }
-.meta-row { display: flex; gap: 20px; flex-wrap: wrap; }
-.meta-item { font-size: 12px; color: var(--text2); }
-.meta-item strong { color: var(--text); font-weight: 500; display: block; margin-top: 1px; }
-.size-grid { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-.size-chip { padding: 3px 10px; background: var(--surface2); border: 0.5px solid var(--border); border-radius: 6px; font-size: 12px; color: var(--text); }
-.note-box { margin-top: 10px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; font-size: 12px; color: var(--text2); }
-.note-box.warn { background: #fce8e8; color: #791f1f; }
-.action-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.action-btn { display: flex; align-items: center; gap: 5px; padding: 5px 12px; background: transparent; border: 0.5px solid var(--border2); border-radius: 7px; font-size: 12px; color: var(--text2); cursor: pointer; transition: all 0.15s; }
-.action-btn:hover { background: var(--surface2); color: var(--text); }
-.action-btn.primary { background: var(--accent); color: #fff; border-color: transparent; }
-.action-btn.primary:hover { opacity: 0.85; }
-.action-btn.danger { border-color: #e8c8c8; color: #c0392b; }
-.action-btn.danger:hover { background: #fce8e8; }
-.step-track { display: flex; align-items: center; margin: 12px 0 4px; }
-.step-node { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.step-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border2); }
-.step-dot.done { background: var(--accent); }
-.step-label { font-size: 10px; color: var(--text3); white-space: nowrap; }
-.step-label.done { color: var(--accent); }
-.step-line { flex: 1; height: 1.5px; background: var(--border); margin-bottom: 14px; }
-.step-line.done { background: var(--accent); }
-.progress-wrap { margin-top: 10px; }
-.progress-bar { height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 3px; background: var(--accent); }
-.progress-fill.red { background: #c0392b; }
-.progress-text { font-size: 11px; color: var(--text3); margin-top: 4px; }
-.miss-tag { color: #c0392b; font-weight: 500; }
-.empty-state { text-align: center; padding: 3rem; color: var(--text3); }
-.empty-state i { font-size: 32px; margin-bottom: 12px; display: block; }
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 200; align-items: center; justify-content: center; }
-.modal-overlay.open { display: flex; }
-.modal { background: var(--surface); border-radius: var(--radius-lg); border: 0.5px solid var(--border2); padding: 1.5rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
-.modal-title { font-size: 16px; font-weight: 600; margin-bottom: 1.25rem; }
-.form-group { margin-bottom: 14px; }
-.form-label { font-size: 12px; color: var(--text2); margin-bottom: 5px; display: block; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 12px; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: 8px; font-size: 13px; color: var(--text); outline: none; transition: border 0.15s; font-family: inherit; }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
-.form-group textarea { height: 70px; resize: vertical; }
-.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
-.btn { padding: 8px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; border: none; font-family: inherit; }
-.btn-cancel { background: var(--surface2); color: var(--text2); }
-.btn-save { background: var(--accent); color: #fff; }
-.setup-overlay { position: fixed; inset: 0; background: rgba(245,244,240,0.97); z-index: 300; display: flex; align-items: center; justify-content: center; }
-.setup-box { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-lg); padding: 2rem; width: 100%; max-width: 480px; }
-.setup-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-.setup-sub { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.7; }
-.setup-steps { background: var(--surface2); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.25rem; font-size: 12.5px; color: var(--text2); line-height: 2; }
-.setup-steps a { color: var(--accent); }
-.toast { position: fixed; bottom: 24px; right: 24px; background: #1a1a18; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 400; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; }
-.toast.show { opacity: 1; transform: translateY(0); }
-
-.finance-block { margin-top: 12px; background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
-.finance-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-.finance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.finance-item { font-size: 12px; color: var(--text2); }
-.finance-item strong { color: var(--text); font-weight: 500; display: block; margin-top: 2px; font-size: 14px; }
-.finance-item .sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
-.profit-bar { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.profit-label { font-size: 12px; color: var(--text2); }
-.profit-value { font-size: 16px; font-weight: 600; }
-.profit-value.pos { color: var(--accent); }
-.profit-value.neg { color: #c0392b; }
-.pay-status { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 500; margin-left: 6px; }
-.pay-status.paid { background: #eaf3de; color: #27500a; }
-.pay-status.unpaid { background: #faeeda; color: #633806; }
-.pay-status.partial { background: #e6f1fb; color: #0c447c; }
-.rate-tag { font-size: 10px; color: var(--text3); }
-.receipt-imgs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-.receipt-img { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; border: 0.5px solid var(--border); cursor: pointer; }
-
-
-.supplier-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 10px; }
-.supplier-header { display: flex; justify-content: space-between; align-items: flex-start; }
-.supplier-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-bg); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; flex-shrink: 0; margin-right: 12px; }
-.supplier-name-row { display: flex; align-items: center; gap: 8px; }
-.supplier-name { font-size: 15px; font-weight: 600; color: var(--text); }
-.tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; background: var(--surface2); color: var(--text2); border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; }
-.tag:hover { border-color: var(--accent); color: var(--accent); }
-.tag.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
-.tag-input-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
-.tag-input { padding: 3px 8px; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: 6px; font-size: 12px; color: var(--text); outline: none; width: 100px; font-family: inherit; }
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px,1fr)); gap: 8px; margin-top: 10px; }
-.product-item { border: 0.5px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface); }
-.product-item img { width: 100%; height: 80px; object-fit: cover; cursor: pointer; }
-.product-item-info { padding: 5px 7px; }
-.product-item-name { font-size: 11px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.product-item-price { font-size: 11px; color: var(--accent); margin-top: 1px; }
-.supplier-contact { font-size: 12px; color: var(--text2); display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
-.supplier-contact a { color: var(--accent); text-decoration: none; }
-
-.card-imgs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.card-img { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 0.5px solid var(--border); cursor: pointer; }
-.img-upload-box { margin-top: 10px; border: 1.5px dashed var(--border2); border-radius: 8px; padding: 14px; text-align: center; cursor: pointer; color: var(--text3); font-size: 12px; }
-.img-preview-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-.img-preview-item { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 0.5px solid var(--border); }
-.img-preview-item img { width: 100%; height: 100%; object-fit: cover; }
-.img-del-btn { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: rgba(0,0,0,0.55); border-radius: 50%; border: none; color: #fff; font-size: 11px; cursor: pointer; }
-.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 500; align-items: center; justify-content: center; cursor: pointer; }
-.lightbox.open { display: flex; }
-.lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f4f0;--surface:#fff;--surface2:#f0ede8;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);--text:#1a1a18;--text2:#5f5e5a;--text3:#999894;--accent:#1a6b4a;--accent-bg:#e1f5ee;--r:10px;--rl:14px}
+body{font-family:-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:var(--surface);border-right:.5px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;gap:4px;flex-shrink:0}
+.logo{font-size:14px;font-weight:600;margin-bottom:1.5rem;padding:0 8px;display:flex;align-items:center;gap:8px}
+.logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.nav-section{font-size:10px;letter-spacing:.08em;color:var(--text3);padding:12px 10px 4px;text-transform:uppercase}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13.5px;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.nav-btn:hover{background:var(--surface2);color:var(--text)}
+.nav-btn.active{background:var(--accent-bg);color:var(--accent);font-weight:500}
+.nav-btn i{font-size:16px}
+.sync-row{margin-top:auto;padding:8px 10px;font-size:11px;display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:#ccc;flex-shrink:0}
+.dot.ok{background:var(--accent)}.dot.err{background:#c0392b}.dot.pulse{background:#f0a500;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.main{flex:1;overflow-y:auto;padding:2rem}
+.page{display:none}.page.active{display:block}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.pt{font-size:20px;font-weight:600}.ps{font-size:13px;color:var(--text2);margin-top:2px}
+.ha{display:flex;gap:8px;align-items:center}
+.add-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer}
+.add-btn:hover{opacity:.85}
+.icon-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;background:var(--surface);border:.5px solid var(--border2);border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer}
+.icon-btn:hover{background:var(--surface2)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+.stat{background:var(--surface);border:.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem}
+.stat-l{font-size:12px;color:var(--text3);margin-bottom:6px}
+.stat-v{font-size:26px;font-weight:600}.stat-v.red{color:#c0392b}.stat-v.green{color:var(--accent)}.stat-v.blue{color:#185fa5}
+.alert{background:#fef3cd;border:.5px solid #f0c040;border-radius:var(--r);padding:10px 14px;margin-bottom:10px;font-size:13px;color:#7a5200;display:flex;align-items:flex-start;gap:8px}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:10px}
+.ct{display:flex;justify-content:space-between;align-items:flex-start}
+.cn{font-size:14.5px;font-weight:600}.cid{font-size:11px;color:var(--text3);font-weight:400;margin-left:6px}
+.cs{font-size:12px;color:var(--text2);margin-top:3px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.bp{background:#faeeda;color:#633806}.bok{background:#eaf3de;color:#27500a}.bi{background:#fce8e8;color:#791f1f}
+.bt{background:#e6f1fb;color:#0c447c}.bd{background:#e1f5ee;color:#085041}.bc{background:#e1f5ee;color:#085041}
+.div{border:none;border-top:.5px solid var(--border);margin:12px 0}
+.mr{display:flex;gap:20px;flex-wrap:wrap}
+.mi{font-size:12px;color:var(--text2)}.mi strong{color:var(--text);font-weight:500;display:block;margin-top:1px}
+.sg{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sc{padding:3px 10px;background:var(--surface2);border:.5px solid var(--border);border-radius:6px;font-size:12px}
+.nb{margin-top:10px;padding:8px 12px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text2)}
+.nb.warn{background:#fce8e8;color:#791f1f}
+.ar{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.ab{display:flex;align-items:center;gap:5px;padding:5px 12px;background:transparent;border:.5px solid var(--border2);border-radius:7px;font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s}
+.ab:hover{background:var(--surface2);color:var(--text)}
+.ab.p{background:var(--accent);color:#fff;border-color:transparent}.ab.p:hover{opacity:.85}
+.ab.d{border-color:#e8c8c8;color:#c0392b}.ab.d:hover{background:#fce8e8}
+.step-track{display:flex;align-items:center;margin:12px 0 4px}
+.sn{display:flex;flex-direction:column;align-items:center;gap:4px}
+.sdot{width:10px;height:10px;border-radius:50%;background:var(--border2)}.sdot.done{background:var(--accent)}
+.sl{font-size:10px;color:var(--text3);white-space:nowrap}.sl.done{color:var(--accent)}
+.sline{flex:1;height:1.5px;background:var(--border);margin-bottom:14px}.sline.done{background:var(--accent)}
+.pb{margin-top:10px}.pbar{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.pfill{height:100%;border-radius:3px;background:var(--accent)}.pfill.red{background:#c0392b}
+.pt2{font-size:11px;color:var(--text3);margin-top:4px}
+.empty{text-align:center;padding:3rem;color:var(--text3)}.empty i{font-size:32px;margin-bottom:12px;display:block}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--rl);border:.5px solid var(--border2);padding:1.5rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-t{font-size:16px;font-weight:600;margin-bottom:1.25rem}
+.fg{margin-bottom:14px}.fl{font-size:12px;color:var(--text2);margin-bottom:5px;display:block}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg input,.fg select,.fg textarea{width:100%;padding:8px 12px;background:var(--surface2);border:.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;transition:border .15s;font-family:inherit}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{height:70px;resize:vertical}
+.mf{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem}
+.btn{padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;border:none;font-family:inherit}
+.btn-c{background:var(--surface2);color:var(--text2)}.btn-s{background:var(--accent);color:#fff}
+.setup-ov{position:fixed;inset:0;background:rgba(245,244,240,.97);z-index:300;display:flex;align-items:center;justify-content:center}
+.setup-box{background:var(--surface);border:.5px solid var(--border2);border-radius:var(--rl);padding:2rem;width:100%;max-width:480px}
+.setup-t{font-size:18px;font-weight:600;margin-bottom:6px}
+.setup-s{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.7}
+.setup-steps{background:var(--surface2);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:12.5px;color:var(--text2);line-height:2}
+.setup-steps a{color:var(--accent)}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a18;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;z-index:400;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.imgs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.img-t{width:72px;height:72px;border-radius:8px;object-fit:cover;border:.5px solid var(--border);cursor:pointer}
+.img-sm{width:56px;height:56px;border-radius:6px;object-fit:cover;border:.5px solid var(--border);cursor:pointer}
+.upload-box{margin-top:10px;border:1.5px dashed var(--border2);border-radius:8px;padding:14px;text-align:center;cursor:pointer;color:var(--text3);font-size:12px}
+.img-prev{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ip-item{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:.5px solid var(--border)}
+.ip-item img{width:100%;height:100%;object-fit:cover}
+.ip-del{position:absolute;top:2px;right:2px;width:18px;height:18px;background:rgba(0,0,0,.55);border-radius:50%;border:none;color:#fff;font-size:11px;cursor:pointer}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;align-items:center;justify-content:center;cursor:pointer}
+.lightbox.open{display:flex}.lightbox img{max-width:90vw;max-height:90vh;border-radius:8px}
+/* Finance */
+.fin{margin-top:12px;background:var(--surface2);border-radius:var(--r);padding:12px 14px}
+.fin-t{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.fin-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fin-i{font-size:12px;color:var(--text2)}.fin-i strong{color:var(--text);font-weight:500;display:block;margin-top:2px;font-size:14px}
+.profit-bar{margin-top:10px;padding-top:10px;border-top:.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pv{font-size:16px;font-weight:600}.pv.pos{color:var(--accent)}.pv.neg{color:#c0392b}
+.ps2{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;margin-left:6px}
+.ps2.paid{background:#eaf3de;color:#27500a}.ps2.unpaid{background:#faeeda;color:#633806}.ps2.partial{background:#e6f1fb;color:#0c447c}
+/* Supplier */
+.sup-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:10px}
+.sup-av{width:40px;height:40px;border-radius:50%;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;flex-shrink:0;margin-right:12px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:500;background:var(--surface2);color:var(--text2);border:.5px solid var(--border);cursor:pointer;margin:2px}
+.tag.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
+.tag-input{padding:3px 8px;background:var(--surface2);border:.5px solid var(--border2);border-radius:6px;font-size:12px;color:var(--text);outline:none;width:120px;font-family:inherit}
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px}
+.prod-item{border:.5px solid var(--border);border-radius:8px;overflow:hidden;background:var(--surface)}
+.prod-item img{width:100%;height:80px;object-fit:cover;cursor:pointer}
+.prod-info{padding:5px 7px}
+.prod-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-price{font-size:11px;color:var(--accent);margin-top:1px}
+.sup-contact{font-size:12px;color:var(--text2);display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+.sup-contact a{color:var(--accent);text-decoration:none}
 </style>
 </head>
 <body>
-
 <div class="toast" id="toast"></div>
-<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lightbox-img" src=""></div>
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('open')"><img id="lb-img" src=""></div>
 
-<div id="setup-overlay" class="setup-overlay" style="display:none">
+<div id="setup-ov" class="setup-ov" style="display:none">
   <div class="setup-box">
-    <div class="setup-title">⚙️ 云端同步配置</div>
-    <div class="setup-sub">使用免费的 JSONBin 存储数据，团队所有人打开此网址都能实时共享同一份数据。</div>
+    <div class="setup-t">⚙️ 云端同步配置</div>
+    <div class="setup-s">使用免费的 JSONBin 存储数据，团队所有人打开此网址都能实时共享同一份数据。</div>
     <div class="setup-steps">
       1. 打开 <a href="https://jsonbin.io" target="_blank">jsonbin.io</a> 注册免费账号<br>
       2. 左侧 <strong>API Keys</strong> → 复制 Master Key<br>
-      3. 左侧 <strong>Bins</strong> → Create a Bin → 输入 <code>{"purchase":[],"domestic":[],"international":[]}</code> → Save<br>
-      4. 复制 Bin ID（右侧面板显示）
+      3. 左侧 <strong>Bins</strong> → Create a Bin → 输入 <code>{"purchase":[],"domestic":[],"international":[],"suppliers":[]}</code> → Save<br>
+      4. 复制右侧面板的 Bin ID
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Master Key</label><input id="setup-apikey" type="text" placeholder="$2a$10$..."></div>
-      <div class="form-group"><label class="form-label">Bin ID</label><input id="setup-binid" type="text" placeholder="6a1eb983..."></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Master Key</label><input id="setup-ak" type="text" placeholder="$2a$10$..."></div>
+      <div class="fg"><label class="fl">Bin ID</label><input id="setup-bid" type="text" placeholder="6a1eb983..."></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
-      <button class="btn btn-cancel" onclick="skipSetup()">跳过（仅本机）</button>
-      <button class="btn btn-save" onclick="applySetup()">连接云端</button>
+      <button class="btn btn-c" onclick="skipSetup()">跳过（仅本机）</button>
+      <button class="btn btn-s" onclick="applySetup()">连接云端</button>
     </div>
   </div>
 </div>
 
-<div class="app-shell">
+<div class="shell">
   <nav class="sidebar">
     <div class="logo"><div class="logo-dot"></div>Runa Vasto</div>
     <div class="nav-section">主菜单</div>
-    <button class="nav-item active" onclick="switchPage('overview',this)"><i class="ti ti-layout-dashboard"></i>总览</button>
+    <button class="nav-btn active" onclick="switchPage('overview',this)"><i class="ti ti-layout-dashboard"></i>总览</button>
     <div class="nav-section">业务模块</div>
-    <button class="nav-item" onclick="switchPage('purchase',this)"><i class="ti ti-shirt"></i>采购需求</button>
-    <button class="nav-item" onclick="switchPage('domestic',this)"><i class="ti ti-building-store"></i>国内发货</button>
-    <button class="nav-item" onclick="switchPage('international',this)"><i class="ti ti-plane"></i>国际运单</button>
-    <button class="nav-item" onclick="switchPage('suppliers',this)"><i class="ti ti-building-factory-2"></i>供应商库</button>
-    <div class="sync-status"><div class="sync-dot" id="sync-dot"></div><span id="sync-text" style="color:var(--text3)">未连接</span></div>
+    <button class="nav-btn" onclick="switchPage('purchase',this)"><i class="ti ti-shirt"></i>采购需求</button>
+    <button class="nav-btn" onclick="switchPage('domestic',this)"><i class="ti ti-building-store"></i>国内发货</button>
+    <button class="nav-btn" onclick="switchPage('international',this)"><i class="ti ti-plane"></i>国际运单</button>
+    <button class="nav-btn" onclick="switchPage('suppliers',this)"><i class="ti ti-building-factory-2"></i>供应商库</button>
+    <div class="sync-row"><div class="dot" id="sync-dot"></div><span id="sync-txt" style="color:var(--text3)">未连接</span></div>
   </nav>
   <main class="main">
+
+    <!-- 总览 -->
     <div id="page-overview" class="page active">
-      <div class="page-header">
-        <div><div class="page-title">业务总览</div><div class="page-sub">实时跟踪所有跨境订单状态</div></div>
-        <div class="header-actions">
+      <div class="ph">
+        <div><div class="pt">业务总览</div><div class="ps">实时跟踪所有跨境订单状态</div></div>
+        <div class="ha">
           <button class="icon-btn" onclick="exportData()"><i class="ti ti-download"></i>导出备份</button>
           <button class="icon-btn" onclick="importData()"><i class="ti ti-upload"></i>导入</button>
           <button class="icon-btn" onclick="reconfigure()"><i class="ti ti-settings"></i>云端配置</button>
         </div>
       </div>
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">采购需求</div><div class="stat-value" id="s-purchase">0</div></div>
-        <div class="stat-card"><div class="stat-label">发货件数异常</div><div class="stat-value red" id="s-issue">0</div></div>
-        <div class="stat-card"><div class="stat-label">国际运输中</div><div class="stat-value blue" id="s-transit">0</div></div>
-        <div class="stat-card"><div class="stat-label">已签收完成</div><div class="stat-value green" id="s-done">0</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-l">采购需求</div><div class="stat-v" id="s0">0</div></div>
+        <div class="stat"><div class="stat-l">发货件数异常</div><div class="stat-v red" id="s1">0</div></div>
+        <div class="stat"><div class="stat-l">国际运输中</div><div class="stat-v blue" id="s2">0</div></div>
+        <div class="stat"><div class="stat-l">已签收完成</div><div class="stat-v green" id="s3">0</div></div>
       </div>
       <div id="alerts"></div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:12px;">近期动态</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px">近期动态</div>
       <div id="overview-list"></div>
     </div>
+
+    <!-- 采购需求 -->
     <div id="page-purchase" class="page">
-      <div class="page-header">
-        <div><div class="page-title">采购需求管理</div><div class="page-sub">尺码规格确认 & 供应商对齐</div></div>
+      <div class="ph">
+        <div><div class="pt">采购需求管理</div><div class="ps">尺码规格确认 & 供应商对齐</div></div>
         <button class="add-btn" onclick="openModal('purchase')"><i class="ti ti-plus"></i>新建需求</button>
       </div>
       <div id="purchase-list"></div>
     </div>
+
+    <!-- 国内发货 -->
     <div id="page-domestic" class="page">
-      <div class="page-header">
-        <div><div class="page-title">国内发货追踪</div><div class="page-sub">菜鸟驿站取件核对</div></div>
+      <div class="ph">
+        <div><div class="pt">国内发货追踪</div><div class="ps">菜鸟驿站取件核对</div></div>
         <button class="add-btn" onclick="openModal('domestic')"><i class="ti ti-plus"></i>录入发货</button>
       </div>
       <div id="domestic-list"></div>
     </div>
+
+    <!-- 国际运单 -->
     <div id="page-international" class="page">
-      <div class="page-header">
-        <div><div class="page-title">国际运单追踪</div><div class="page-sub">货代运单号 & 物流状态管理</div></div>
+      <div class="ph">
+        <div><div class="pt">国际运单追踪</div><div class="ps">货代运单号 & 物流状态管理</div></div>
         <button class="add-btn" onclick="openModal('international')"><i class="ti ti-plus"></i>新增运单</button>
       </div>
       <div id="international-list"></div>
     </div>
-  
+
+    <!-- 供应商库 -->
     <div id="page-suppliers" class="page">
-      <div class="page-header">
-        <div><div class="page-title">供应商库</div><div class="page-sub">管理供应商信息、标签与产品目录</div></div>
-        <div class="header-actions">
-          <input id="supplier-search" type="text" placeholder="搜索供应商..." oninput="renderSuppliers()" style="padding:7px 12px;background:var(--surface);border:0.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;width:180px;">
-          <div id="tag-filter-bar" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;"></div>
+      <div class="ph">
+        <div><div class="pt">供应商库</div><div class="ps">管理供应商信息、标签与产品目录</div></div>
+        <div class="ha">
+          <input id="sup-search" type="text" placeholder="搜索供应商..." oninput="renderSuppliers()" style="padding:7px 12px;background:var(--surface);border:.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;width:160px;font-family:inherit">
+          <div id="tag-filter-bar" style="display:flex;gap:6px;flex-wrap:wrap"></div>
           <button class="add-btn" onclick="openModal('supplier')"><i class="ti ti-plus"></i>新增供应商</button>
         </div>
       </div>
       <div id="supplier-list"></div>
     </div>
-</main>
+
+  </main>
 </div>
 
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div class="overlay" id="modal-ov" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-t" id="modal-t"></div>
     <div id="modal-body"></div>
-    <div class="modal-footer">
-      <button class="btn btn-cancel" onclick="closeModal()">取消</button>
-      <button class="btn btn-save" onclick="saveModal()">保存</button>
+    <div class="mf">
+      <button class="btn btn-c" onclick="closeModal()">取消</button>
+      <button class="btn btn-s" onclick="saveModal()">保存</button>
     </div>
   </div>
 </div>
 
 <script>
-var LS_KEY = 'runhe_crossborder_v2';
-var LS_CFG = 'runhe_jsonbin_config';
-var data = { purchase:[], domestic:[], international:[], suppliers:[] };
-var useCloud = false;
-var binId = null;
-var apiKey = null;
-var syncTimer = null;
-var currentModal = null;
-var modalImages = [];
-var modalSupplierReceipts = [];
-var modalCustomerReceipts = [];
+var LS_KEY='rv_data_v3', LS_CFG='rv_cfg_v1';
+var data={purchase:[],domestic:[],international:[],suppliers:[]};
+var useCloud=false, binId=null, apiKey=null, syncTimer=null;
+var currentModal=null;
+var mImgs=[], mSupReceipts=[], mCustReceipts=[], mProdImg=null;
+var activeTagFilter=null;
+var usdRate=7.25;
 
-function loadLocal() {
-  try {
-    var s = localStorage.getItem(LS_KEY);
-    data = s ? JSON.parse(s) : { purchase:[], domestic:[], international:[] };
-  } catch(e) { data = { purchase:[], domestic:[], international:[] }; }
-}
-function saveLocal() { localStorage.setItem(LS_KEY, JSON.stringify(data)); }
-
-function setSyncStatus(state, text) {
-  var dot = document.getElementById('sync-dot');
-  var lbl = document.getElementById('sync-text');
-  dot.className = 'sync-dot' + (state ? ' '+state : '');
-  lbl.textContent = text;
-}
-
-function toast(msg) {
-  var el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  setTimeout(function(){ el.classList.remove('show'); }, 2500);
-}
-
-
-// ── USD Rate ───────────────────────────────────────────────────
-window._usdRate = 7.25;
+// fetch rate
 fetch('https://api.exchangerate-api.com/v4/latest/USD')
-  .then(function(r){ return r.json(); })
-  .then(function(d){ if(d.rates&&d.rates.CNY) window._usdRate = Math.round(d.rates.CNY*100)/100; })
+  .then(function(r){return r.json();})
+  .then(function(d){if(d.rates&&d.rates.CNY)usdRate=Math.round(d.rates.CNY*100)/100;})
   .catch(function(){});
 
-// ── JSONBin Cloud ──────────────────────────────────────────────
-function connectCloud(cfg) {
-  binId = cfg.binId; apiKey = cfg.apiKey; useCloud = true;
-  setSyncStatus('pulse', '连接中...');
-  fetchCloud();
+function loadLocal(){
+  try{var s=localStorage.getItem(LS_KEY);data=s?JSON.parse(s):{purchase:[],domestic:[],international:[],suppliers:[]};}
+  catch(e){data={purchase:[],domestic:[],international:[],suppliers:[]};}
+  if(!data.suppliers)data.suppliers=[];
+}
+function saveLocal(){localStorage.setItem(LS_KEY,JSON.stringify(data));}
+
+function setSS(state,txt){
+  document.getElementById('sync-dot').className='dot'+(state?' '+state:'');
+  document.getElementById('sync-txt').textContent=txt;
+}
+function toast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},2500);
+}
+function openLightbox(src){
+  document.getElementById('lb-img').src=src;
+  document.getElementById('lightbox').classList.add('open');
 }
 
-function fetchCloud() {
-  if (!binId || !apiKey) return;
-  fetch('https://api.jsonbin.io/v3/b/' + binId + '/latest', {
-    headers: { 'X-Master-Key': apiKey }
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(res) {
-    if (res.record && res.record.purchase) {
-      if (!res.record.suppliers) res.record.suppliers = [];
-      var cloudTotal = (res.record.purchase||[]).length + (res.record.domestic||[]).length + (res.record.international||[]).length;
-      var localTotal = data.purchase.length + data.domestic.length + data.international.length;
-      if (cloudTotal === 0 && localTotal > 0) {
-        // Cloud is empty but local has data — push local up to cloud
-        pushCloud();
-        setSyncStatus('ok', '已同步');
-      } else if (cloudTotal > 0) {
-        // Cloud has data — use cloud
-        data = res.record;
-        saveLocal(); renderAll();
-        setSyncStatus('ok', '已同步');
-      } else {
-        setSyncStatus('ok', '已同步');
-      }
-    } else {
-      if (data.purchase.length > 0 || data.domestic.length > 0 || data.international.length > 0) {
-        pushCloud();
-      }
-      setSyncStatus('ok', '已同步');
-    }
-  })
-  .catch(function(e){ setSyncStatus('err', '读取失败'); });
+// ── Cloud ──────────────────────────────────────────────────────
+function connectCloud(cfg){
+  binId=cfg.binId;apiKey=cfg.apiKey;useCloud=true;
+  setSS('pulse','连接中...');fetchCloud();
 }
-
-function pushCloud() {
-  if (!binId || !apiKey) return;
+function fetchCloud(){
+  if(!binId||!apiKey)return;
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey}})
+  .then(function(r){return r.json();})
+  .then(function(res){
+    if(res.record&&res.record.purchase){
+      if(!res.record.suppliers)res.record.suppliers=[];
+      var ct=(res.record.purchase||[]).length+(res.record.domestic||[]).length+(res.record.international||[]).length;
+      var lt=data.purchase.length+data.domestic.length+data.international.length;
+      if(ct===0&&lt>0){pushCloud();}
+      else if(ct>0){data=res.record;if(!data.suppliers)data.suppliers=[];saveLocal();renderAll();}
+      setSS('ok','已同步');
+    } else {if(lt>0)pushCloud();setSS('ok','已同步');}
+  })
+  .catch(function(){setSS('err','读取失败');});
+}
+function pushCloud(){
+  if(!binId||!apiKey)return;
   clearTimeout(syncTimer);
-  syncTimer = setTimeout(function() {
-    setSyncStatus('pulse', '同步中...');
-    fetch('https://api.jsonbin.io/v3/b/' + binId, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'X-Master-Key': apiKey },
-      body: JSON.stringify(data)
-    })
-    .then(function(){ setSyncStatus('ok', '已同步'); })
-    .catch(function(){ setSyncStatus('err', '同步失败'); });
-  }, 800);
+  syncTimer=setTimeout(function(){
+    setSS('pulse','同步中...');
+    fetch('https://api.jsonbin.io/v3/b/'+binId,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':apiKey},body:JSON.stringify(data)})
+    .then(function(){setSS('ok','已同步');})
+    .catch(function(){setSS('err','同步失败');});
+  },800);
 }
-
-function persist(col, item) {
-  saveLocal();
-  if (useCloud) pushCloud();
-  renderAll();
-}
-
-function removeRecord(col, id) {
-  data[col] = data[col].filter(function(x){ return x.id !== id; });
-  saveLocal();
-  if (useCloud) pushCloud();
-  renderAll();
-}
+function persist(){saveLocal();if(useCloud)pushCloud();renderAll();}
 
 // ── Setup ──────────────────────────────────────────────────────
-function skipSetup() {
-  document.getElementById('setup-overlay').style.display = 'none';
-  loadLocal(); renderAll();
-  document.getElementById('sync-dot').style.background = '#aaa';
-  document.getElementById('sync-text').textContent = '仅本机存储';
+function skipSetup(){
+  document.getElementById('setup-ov').style.display='none';
+  loadLocal();renderAll();
+  document.getElementById('sync-dot').style.background='#aaa';
+  document.getElementById('sync-txt').textContent='仅本机存储';
 }
-
-function applySetup() {
-  var ak = document.getElementById('setup-apikey').value.trim();
-  var bid = document.getElementById('setup-binid').value.trim();
-  if (!ak || !bid) { alert('请填写 Master Key 和 Bin ID'); return; }
-  var cfg = { apiKey: ak, binId: bid };
-  localStorage.setItem(LS_CFG, JSON.stringify(cfg));
-  document.getElementById('setup-overlay').style.display = 'none';
-  loadLocal(); renderAll();
-  connectCloud(cfg);
+function applySetup(){
+  var ak=document.getElementById('setup-ak').value.trim();
+  var bid=document.getElementById('setup-bid').value.trim();
+  if(!ak||!bid){alert('请填写 Master Key 和 Bin ID');return;}
+  var cfg={apiKey:ak,binId:bid};
+  localStorage.setItem(LS_CFG,JSON.stringify(cfg));
+  document.getElementById('setup-ov').style.display='none';
+  loadLocal();renderAll();connectCloud(cfg);
 }
-
-function reconfigure() {
-  try {
-    var cfg = JSON.parse(localStorage.getItem(LS_CFG) || '{}');
-    var ak = document.getElementById('setup-apikey');
-    var bid = document.getElementById('setup-binid');
-    if (ak) ak.value = cfg.apiKey || '';
-    if (bid) bid.value = cfg.binId || '';
-  } catch(e){}
-  document.getElementById('setup-overlay').style.display = 'flex';
+function reconfigure(){
+  try{var cfg=JSON.parse(localStorage.getItem(LS_CFG)||'{}');
+    document.getElementById('setup-ak').value=cfg.apiKey||'';
+    document.getElementById('setup-bid').value=cfg.binId||'';}catch(e){}
+  document.getElementById('setup-ov').style.display='flex';
 }
-
-// ── Init ───────────────────────────────────────────────────────
-(function init() {
-  var saved = localStorage.getItem(LS_CFG);
-  if (saved) {
-    loadLocal(); renderAll();
-    try { connectCloud(JSON.parse(saved)); } catch(e) { setSyncStatus('err','云端不可用'); }
-  } else {
-    loadLocal(); renderAll();
-    document.getElementById('setup-overlay').style.display = 'flex';
-  }
+(function init(){
+  var s=localStorage.getItem(LS_CFG);
+  if(s){loadLocal();renderAll();try{connectCloud(JSON.parse(s));}catch(e){setSS('err','云端不可用');}}
+  else{loadLocal();renderAll();document.getElementById('setup-ov').style.display='flex';}
 })();
 
 // ── Nav ────────────────────────────────────────────────────────
-function switchPage(p, el) {
-  document.querySelectorAll('.page').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.nav-item').forEach(function(b){ b.classList.remove('active'); });
+function switchPage(p,el){
+  document.querySelectorAll('.page').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
   document.getElementById('page-'+p).classList.add('active');
   el.classList.add('active');
   renderAll();
 }
 
+// ── Render ─────────────────────────────────────────────────────
+function renderAll(){
+  updateStats();renderAlerts();renderOverview();
+  renderPurchase();renderDomestic();renderIntl();renderSuppliers();
+}
+function updateStats(){
+  document.getElementById('s0').textContent=data.purchase.length;
+  document.getElementById('s1').textContent=data.domestic.filter(function(d){return d.status==='issue';}).length;
+  document.getElementById('s2').textContent=data.international.filter(function(i){return i.status==='transit';}).length;
+  document.getElementById('s3').textContent=data.international.filter(function(i){return i.status==='done';}).length;
+}
+function renderAlerts(){
+  var h='';
+  data.domestic.filter(function(d){return d.status==='issue';}).forEach(function(d){
+    h+='<div class="alert"><i class="ti ti-alert-triangle"></i><span>【发货异常】'+d.id+' · '+d.supplier+' → '+d.station+'：实收 <strong>'+d.actualPcs+'</strong> 件，应收 <strong>'+d.expectedPcs+'</strong> 件。'+(d.notes||'')+'</span></div>';
+  });
+  data.international.filter(function(i){return !i.trackingNo;}).forEach(function(i){
+    h+='<div class="alert"><i class="ti ti-alert-triangle"></i><span>【运单号缺失】'+i.id+' · '+i.forwarder+'（'+i.dest+'）尚未提供运单号，请跟进。</span></div>';
+  });
+  document.getElementById('alerts').innerHTML=h;
+}
+function renderOverview(){
+  var cards=[];
+  data.domestic.filter(function(d){return d.status==='issue';}).forEach(function(d){cards.push(domCard(d,false));});
+  data.international.filter(function(i){return !i.trackingNo;}).forEach(function(i){cards.push(intlCard(i,false));});
+  data.purchase.forEach(function(p){cards.push(purCard(p,false));});
+  data.international.filter(function(i){return i.trackingNo;}).forEach(function(i){cards.push(intlCard(i,false));});
+  document.getElementById('overview-list').innerHTML=cards.slice(0,8).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无数据</div>';
+}
+function renderPurchase(){
+  document.getElementById('purchase-list').innerHTML=data.purchase.map(function(p){return purCard(p,true);}).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无采购需求</div>';
+}
+function renderDomestic(){
+  document.getElementById('domestic-list').innerHTML=data.domestic.map(function(d){return domCard(d,true);}).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无发货记录</div>';
+}
+function renderIntl(){
+  document.getElementById('international-list').innerHTML=data.international.map(function(i){return intlCard(i,true);}).join('')||'<div class="empty"><i class="ti ti-inbox"></i>暂无运单记录</div>';
+}
 
-// ── Suppliers ──────────────────────────────────────────────────
-var activeTagFilter = null;
+// ── Purchase Card ──────────────────────────────────────────────
+function purCard(p,full){
+  var bm={confirmed:['bc','已付款'],pending:['bp','待付款']};
+  var bd=bm[p.status]||bm.pending;
+  var st=Object.entries(p.sizes||{}).map(function(e){return '<span class="sc">'+e[0]+' × '+e[1]+'</span>';}).join('');
+  var pimgs=(p.images&&p.images.length)?'<div class="imgs">'+p.images.map(function(s){return '<img class="img-t" src="'+s+'" onclick="openLightbox(this.src)">';}).join('')+'</div>':'';
+  var fin='';
+  if(full){
+    var sAmt=p.supplierAmount||0, cUsd=p.customerAmount||0;
+    var cCny=Math.round(cUsd*usdRate*100)/100;
+    var profit=Math.round((cCny-sAmt)*100)/100;
+    var pRate=cCny>0?Math.round(profit/cCny*1000)/10:0;
+    var spSt=p.supplierPayStatus||'unpaid', cpSt=p.customerPayStatus||'unpaid';
+    var spL={unpaid:'待付款',paid:'已付款',partial:'部分付'}[spSt];
+    var cpL={unpaid:'待收款',paid:'已收款',partial:'部分收'}[cpSt];
+    var srImgs=(p.supplierReceipts||[]).map(function(s){return '<img class="img-sm" src="'+s+'" onclick="openLightbox(this.src)">';}).join('');
+    var crImgs=(p.customerReceipts||[]).map(function(s){return '<img class="img-sm" src="'+s+'" onclick="openLightbox(this.src)">';}).join('');
+    fin='<div class="fin"><div class="fin-t">💰 财务核算 <span style="font-size:10px;color:var(--text3)">汇率 1 USD = '+usdRate+' CNY</span></div>'
+      +'<div class="fin-g">'
+      +'<div class="fin-i">供应商付款 <span class="ps2 '+spSt+'">'+spL+'</span><strong>'+(sAmt?'¥'+sAmt:'——')+'</strong>'+(srImgs?'<div class="imgs" style="margin-top:6px">'+srImgs+'</div>':'')+'</div>'
+      +'<div class="fin-i">客户收款 <span class="ps2 '+cpSt+'">'+cpL+'</span><strong>'+(cUsd?'$'+cUsd+' <span style="font-size:11px;color:var(--text3)">≈ ¥'+cCny+'</span>':'——')+'</strong>'+(crImgs?'<div class="imgs" style="margin-top:6px">'+crImgs+'</div>':'')+'</div>'
+      +'</div>'
+      +(sAmt&&cUsd?'<div class="profit-bar"><span style="font-size:12px;color:var(--text2)">毛利</span><div><span class="pv '+(profit>=0?'pos':'neg')+'">'+(profit>=0?'+':'')+profit+' 元</span><span style="font-size:11px;color:var(--text3);margin-left:6px">('+pRate+'%)</span></div></div>':'')
+      +'</div>';
+  }
+  var act=full?'<div class="ar"><button class="ab '+(p.status==='confirmed'?'':'p')+'" onclick="toggleConfirm(\''+p.id+'\')"><i class="ti ti-check"></i>'+(p.status==='confirmed'?'撤销付款':'确认付款')+'</button><button class="ab" onclick="openModal(\'purchase\',\''+p.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="ab d" onclick="delRecord(\'purchase\',\''+p.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
+  var detail=full
+    ?'<hr class="div"><div class="mr"><div class="mi">颜色<strong>'+(p.color||'—')+'</strong></div><div class="mi">总件数<strong>'+p.qty+' 件</strong></div><div class="mi">截止<strong>'+p.deadline+'</strong></div></div>'+(st?'<div style="margin-top:10px;font-size:12px;color:var(--text3)">尺码分配</div><div class="sg">'+st+'</div>':'')+(p.notes?'<div class="nb">备注：'+p.notes+'</div>':'')+pimgs+fin
+    :'<div class="mr" style="margin-top:8px"><div class="mi">截止 <strong>'+p.deadline+'</strong></div><div class="mi">共 <strong>'+p.qty+' 件</strong></div></div>';
+  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-shirt" style="font-size:13px;margin-right:5px"></i>'+p.product+'<span class="cid">'+p.id+'</span></div><div class="cs">客户：'+p.client+' · 供应商：'+p.supplier+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+}
 
-function getAllTags() {
-  var tags = {};
-  data.suppliers.forEach(function(s){ (s.tags||[]).forEach(function(t){ tags[t] = (tags[t]||0)+1; }); });
+// ── Domestic Card ──────────────────────────────────────────────
+function domCard(d,full){
+  var sm={pending:['bp','待到达'],ok:['bok','已核对'],issue:['bi','件数异常']};
+  var bd=sm[d.status]||sm.pending;
+  var pct=(d.actualPcs!==null&&d.actualPcs!==undefined)?Math.round(d.actualPcs/d.expectedPcs*100):0;
+  var isI=d.status==='issue';
+  var act=full?'<div class="ar">'+(d.status!=='ok'?'<button class="ab p" onclick="markOk(\''+d.id+'\')"><i class="ti ti-check"></i>标记已核对</button>':'')+'<button class="ab" onclick="openModal(\'domestic\',\''+d.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="ab d" onclick="delRecord(\'domestic\',\''+d.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
+  var detail=full
+    ?'<hr class="div"><div class="mr"><div class="mi">取件码<strong style="'+(d.pickupCode?'':'color:#c0392b')+'">'+(d.pickupCode||'⚠ 未填写')+'</strong></div><div class="mi">应收<strong>'+d.expectedPcs+' 件</strong></div><div class="mi">实收<strong style="'+(isI?'color:#c0392b':'')+'">'+(d.actualPcs!==null&&d.actualPcs!==undefined?d.actualPcs+' 件':'——')+'</strong></div><div class="mi">到站<strong>'+(d.arrivalDate||'——')+'</strong></div></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="pb"><div class="pbar"><div class="pfill '+(isI?'red':'')+'" style="width:'+pct+'%"></div></div><div class="pt2">核对完成度 '+pct+'%'+(isI?' · 缺少 '+(d.expectedPcs-d.actualPcs)+' 件':'')+'</div></div>':'')+(d.notes?'<div class="nb '+(isI?'warn':'')+'">备注：'+d.notes+'</div>':'')
+    :'<div class="mr" style="margin-top:8px"><div class="mi">应收 <strong>'+d.expectedPcs+'</strong> 件</div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="mi" style="'+(isI?'color:#c0392b':'')+'">实收 <strong>'+d.actualPcs+'</strong> 件</div>':'')+'</div>';
+  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-building-store" style="font-size:13px;margin-right:5px"></i>'+d.supplier+'<span class="cid">'+d.id+'</span></div><div class="cs">关联：'+d.ref+' · 驿站：'+d.station+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+}
+
+// ── Intl Card ──────────────────────────────────────────────────
+function intlCard(i,full){
+  var sm={pending:['bp','待发货'],transit:['bt','运输中'],done:['bd','已签收'],issue:['bi','异常']};
+  var bd=sm[i.status]||sm.pending;
+  var steps=['下单','发货','运途','目的地','签收'];
+  var si={pending:0,transit:2,done:4,issue:2}[i.status]||0;
+  var sh=steps.map(function(s,idx){var done=idx<=si;return (idx>0?'<div class="sline '+(done?'done':'')+'"></div>':'')+'<div class="sn"><div class="sdot '+(done?'done':'')+'"></div><div class="sl '+(done?'done':'')+'">'+s+'</div></div>';}).join('');
+  var mn=!i.trackingNo;
+  var act=full?'<div class="ar">'+(mn?'<button class="ab p" onclick="inputTracking(\''+i.id+'\')"><i class="ti ti-input-search"></i>录入运单号</button>':'')+'<button class="ab" onclick="openModal(\'international\',\''+i.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="ab d" onclick="delRecord(\'international\',\''+i.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
+  var detail=full
+    ?'<div class="step-track">'+sh+'</div><hr class="div"><div class="mr"><div class="mi">承运商<strong>'+i.carrier+'</strong></div><div class="mi">运单号<strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 未获取')+'</strong></div><div class="mi">发货日<strong>'+(i.shipDate||'——')+'</strong></div><div class="mi">预计到达<strong>'+i.eta+'</strong></div></div>'+(i.lastUpdate?'<div class="nb">'+i.lastUpdate+'</div>':'')+(i.notes?'<div class="nb">'+i.notes+'</div>':'')
+    :'<div class="mr" style="margin-top:8px"><div class="mi">'+i.carrier+' <strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 运单号缺失')+'</strong></div><div class="mi">ETA <strong>'+i.eta+'</strong></div></div>';
+  return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-plane" style="font-size:13px;margin-right:5px"></i>'+i.origin+' → '+i.dest+'<span class="cid">'+i.id+'</span></div><div class="cs">关联：'+i.ref+' · '+i.forwarder+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+}
+
+// ── Supplier ───────────────────────────────────────────────────
+function getAllTags(){
+  var tags={};
+  data.suppliers.forEach(function(s){(s.tags||[]).forEach(function(t){tags[t]=(tags[t]||0)+1;});});
   return tags;
 }
-
-function renderTagFilterBar() {
-  var tags = getAllTags();
-  var bar = document.getElementById('tag-filter-bar');
-  if (!bar) return;
-  var html = Object.keys(tags).map(function(t){
-    return '<span class="tag'+(activeTagFilter===t?' active':'')+'" onclick="toggleTagFilter(''+t+'')">' + t + ' <span style="opacity:0.6">'+tags[t]+'</span></span>';
+function renderTagBar(){
+  var tags=getAllTags();
+  var el=document.getElementById('tag-filter-bar');
+  if(!el)return;
+  el.innerHTML=Object.keys(tags).map(function(t){
+    return '<span class="tag'+(activeTagFilter===t?' active':'')+'" onclick="toggleTagF(\''+t+'\')" style="cursor:pointer">'+t+' <span style="opacity:.6">'+tags[t]+'</span></span>';
   }).join('');
-  bar.innerHTML = html;
 }
-
-function toggleTagFilter(tag) {
-  activeTagFilter = activeTagFilter === tag ? null : tag;
-  renderSuppliers();
-}
-
-function renderSuppliers() {
-  renderTagFilterBar();
-  var q = (document.getElementById('supplier-search')||{}).value || '';
-  q = q.toLowerCase();
-  var list = data.suppliers.filter(function(s){
-    var matchQ = !q || s.name.toLowerCase().includes(q) || (s.contact||'').toLowerCase().includes(q);
-    var matchTag = !activeTagFilter || (s.tags||[]).includes(activeTagFilter);
-    return matchQ && matchTag;
+function toggleTagF(t){activeTagFilter=activeTagFilter===t?null:t;renderSuppliers();}
+function renderSuppliers(){
+  renderTagBar();
+  var q=((document.getElementById('sup-search')||{}).value||'').toLowerCase();
+  var list=data.suppliers.filter(function(s){
+    var mq=!q||s.name.toLowerCase().includes(q)||(s.contact||'').toLowerCase().includes(q);
+    var mt=!activeTagFilter||(s.tags||[]).includes(activeTagFilter);
+    return mq&&mt;
   });
-  var html = list.map(function(s){ return supplierCard(s); }).join('');
-  var el = document.getElementById('supplier-list');
-  if (el) el.innerHTML = html || '<div class="empty-state"><i class="ti ti-building-factory-2"></i>暂无供应商</div>';
+  var el=document.getElementById('supplier-list');
+  if(!el)return;
+  el.innerHTML=list.map(function(s){return supCard(s);}).join('')||'<div class="empty"><i class="ti ti-building-factory-2"></i>暂无供应商</div>';
 }
-
-function supplierCard(s) {
-  var initial = s.name ? s.name.charAt(0) : '?';
-  var tags = (s.tags||[]).map(function(t){ return '<span class="tag">'+t+'</span>'; }).join('');
-  var products = (s.products||[]).map(function(p){
-    return '<div class="product-item"><img src="'+p.image+'" onclick="openLightbox(this.src)"><div class="product-item-info"><div class="product-item-name">'+p.name+'</div><div class="product-item-price">'+(p.price?'¥'+p.price:'')+'</div></div></div>';
+function supCard(s){
+  var init=s.name?s.name.charAt(0):'?';
+  var tags=(s.tags||[]).map(function(t){return '<span class="tag">'+t+'</span>';}).join('');
+  var prods=(s.products||[]).map(function(p){
+    return '<div class="prod-item">'+(p.image?'<img src="'+p.image+'" onclick="openLightbox(this.src)">':'<div style="height:80px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text3)"><i class="ti ti-photo" style="font-size:24px"></i></div>')+'<div class="prod-info"><div class="prod-name">'+p.name+'</div><div class="prod-price">'+(p.price?'¥'+p.price:'')+'</div>'+(p.note?'<div style="font-size:10px;color:var(--text3)">'+p.note+'</div>':'')+'</div></div>';
   }).join('');
-  return '<div class="supplier-card">'
-    +'<div class="supplier-header">'
-    +'<div style="display:flex;align-items:flex-start">'
-    +'<div class="supplier-avatar">'+initial+'</div>'
-    +'<div><div class="supplier-name">'+s.name+'</div>'
-    +'<div class="supplier-contact">'
-    +(s.contact?'<span><i class="ti ti-user" style="font-size:12px;margin-right:3px"></i>'+s.contact+'</span>':'')
-    +(s.phone?'<span><i class="ti ti-phone" style="font-size:12px;margin-right:3px"></i>'+s.phone+'</span>':'')
-    +(s.wechat?'<span><i class="ti ti-brand-wechat" style="font-size:12px;margin-right:3px"></i>'+s.wechat+'</span>':'')
-    +(s.city?'<span><i class="ti ti-map-pin" style="font-size:12px;margin-right:3px"></i>'+s.city+'</span>':'')
-    +(s.shopUrl?'<a href="'+s.shopUrl+'" target="_blank"><i class="ti ti-external-link" style="font-size:12px;margin-right:3px"></i>店铺链接</a>':'')
-    +'</div>'
-    +(tags?'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;">'+tags+'</div>':'')
-    +'</div></div>'
-    +'<div class="action-row" style="margin-top:0">'
-    +'<button class="action-btn" onclick="openModal('supplier',''+s.id+'')"><i class="ti ti-edit"></i>编辑</button>'
-    +'<button class="action-btn" onclick="openAddProduct(''+s.id+'')"><i class="ti ti-photo-plus"></i>加产品</button>'
-    +'<button class="action-btn danger" onclick="del('suppliers',''+s.id+'')"><i class="ti ti-trash"></i>删除</button>'
-    +'</div>'
-    +'</div>'
-    +(s.notes?'<div class="note-box" style="margin-top:8px">'+s.notes+'</div>':'')
-    +(products?'<div class="product-grid">'+products+'</div>':'')
-    +'</div>';
-}
-
-var addProductSupplierId = null;
-function openAddProduct(sid) {
-  addProductSupplierId = sid;
-  var s = data.suppliers.find(function(x){ return x.id===sid; });
-  if (!s) return;
-  currentModal = {type:'addProduct', editId: sid};
-  document.getElementById('modal-title').textContent = '添加产品 — '+s.name;
-  document.getElementById('modal-body').innerHTML =
-    '<div class="form-group"><label class="form-label">产品名称</label><input id="f-pname" type="text" placeholder="如：LV黑色运动鞋"></div>'
-    +'<div class="form-row"><div class="form-group"><label class="form-label">价格（人民币）</label><input id="f-pprice" type="number" placeholder="0"></div><div class="form-group"><label class="form-label">备注</label><input id="f-pnote" type="text" placeholder="尺码、颜色等"></div></div>'
-    +'<div class="form-group"><label class="form-label">产品图片</label><div class="img-upload-box" onclick="document.getElementById(\'f-pimg-input\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>上传产品图</div><input id="f-pimg-input" type="file" accept="image/*" style="display:none" onchange="handleProductImg(this)"><div id="pimg-preview" style="margin-top:8px"></div></div>';
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-var pendingProductImg = null;
-function handleProductImg(input) {
-  var file = input.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e){
-    pendingProductImg = e.target.result;
-    document.getElementById('pimg-preview').innerHTML = '<img src="'+pendingProductImg+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px;">';
-  };
-  reader.readAsDataURL(file);
-}
-
-// ── Render ─────────────────────────────────────────────────────
-function renderAll() {
-  updateStats(); renderAlerts(); renderOverview();
-  renderPurchase(); renderDomestic(); renderInternational(); renderSuppliers();
-}
-
-function updateStats() {
-  document.getElementById('s-purchase').textContent = data.purchase.length;
-  document.getElementById('s-issue').textContent = data.domestic.filter(function(d){ return d.status==='issue'; }).length;
-  document.getElementById('s-transit').textContent = data.international.filter(function(i){ return i.status==='transit'; }).length;
-  document.getElementById('s-done').textContent = data.international.filter(function(i){ return i.status==='done'; }).length;
-}
-
-function renderAlerts() {
-  var html = '';
-  data.domestic.filter(function(d){ return d.status==='issue'; }).forEach(function(d) {
-    html += '<div class="alert-bar"><i class="ti ti-alert-triangle"></i><span>【发货异常】'+d.id+' · '+d.supplier+' → '+d.station+'：实收 <strong>'+d.actualPcs+'</strong> 件，应收 <strong>'+d.expectedPcs+'</strong> 件。'+(d.notes||'')+'</span></div>';
-  });
-  data.international.filter(function(i){ return !i.trackingNo; }).forEach(function(i) {
-    html += '<div class="alert-bar"><i class="ti ti-alert-triangle"></i><span>【运单号缺失】'+i.id+' · '+i.forwarder+' 尚未提供运单号（'+i.dest+'），请跟进。</span></div>';
-  });
-  document.getElementById('alerts').innerHTML = html;
-}
-
-function renderOverview() {
-  var cards = [];
-  data.domestic.filter(function(d){ return d.status==='issue'; }).forEach(function(d){ cards.push(domCard(d,false)); });
-  data.international.filter(function(i){ return !i.trackingNo; }).forEach(function(i){ cards.push(intlCard(i,false)); });
-  data.purchase.forEach(function(p){ cards.push(pCard(p,false)); });
-  data.international.filter(function(i){ return i.trackingNo; }).forEach(function(i){ cards.push(intlCard(i,false)); });
-  document.getElementById('overview-list').innerHTML = cards.slice(0,8).join('') || '<div class="empty-state"><i class="ti ti-inbox"></i>暂无数据</div>';
-}
-
-function renderPurchase() {
-  document.getElementById('purchase-list').innerHTML = data.purchase.map(function(p){ return pCard(p,true); }).join('') || '<div class="empty-state"><i class="ti ti-inbox"></i>暂无采购需求</div>';
-}
-function renderDomestic() {
-  document.getElementById('domestic-list').innerHTML = data.domestic.map(function(d){ return domCard(d,true); }).join('') || '<div class="empty-state"><i class="ti ti-inbox"></i>暂无发货记录</div>';
-}
-function renderInternational() {
-  document.getElementById('international-list').innerHTML = data.international.map(function(i){ return intlCard(i,true); }).join('') || '<div class="empty-state"><i class="ti ti-inbox"></i>暂无运单记录</div>';
-}
-
-function pCard(p, full) {
-  var bm = {confirmed:['badge-confirmed','已付款'],pending:['badge-pending','待付款']};
-  var bd = bm[p.status]||bm.pending;
-  var st = Object.entries(p.sizes||{}).map(function(e){ return '<span class="size-chip">'+e[0]+' × '+e[1]+'</span>'; }).join('');
-  var imgs = (p.images&&p.images.length) ? '<div class="card-imgs">'+p.images.map(function(src){ return '<img class="card-img" src="'+src+'" onclick="openLightbox(this.src)">'; }).join('')+'</div>' : '';
-  var act = full ? '<div class="action-row"><button class="action-btn '+(p.status==='confirmed'?'':'primary')+'" onclick="toggleConfirm(\''+p.id+'\')"><i class="ti ti-check"></i>'+(p.status==='confirmed'?'撤销付款':'确认付款')+'</button><button class="action-btn" onclick="openModal(\'purchase\',\''+p.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="action-btn danger" onclick="del(\'purchase\',\''+p.id+'\')"><i class="ti ti-trash"></i>删除</button></div>' : '';
-  var detail = full
-    ? '<hr class="divider"><div class="meta-row"><div class="meta-item">颜色<strong>'+(p.color||'—')+'</strong></div><div class="meta-item">总件数<strong>'+p.qty+' 件</strong></div><div class="meta-item">截止<strong>'+p.deadline+'</strong></div></div><div style="margin-top:10px;font-size:12px;color:var(--text3);">尺码分配</div><div class="size-grid">'+st+'</div>'+(p.notes?'<div class="note-box">备注：'+p.notes+'</div>':'')+imgs
-    : '<div class="meta-row" style="margin-top:8px"><div class="meta-item">截止 <strong>'+p.deadline+'</strong></div><div class="meta-item">共 <strong>'+p.qty+' 件</strong></div></div>';
-  return '<div class="card"><div class="card-top"><div><div class="card-title"><i class="ti ti-shirt" style="font-size:13px;margin-right:5px"></i>'+p.product+'<span class="card-id">'+p.id+'</span></div><div class="card-sub">客户：'+p.client+' · 供应商：'+p.supplier+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
-}
-
-function domCard(d, full) {
-  var sm = {pending:['badge-pending','待到达'],ok:['badge-ok','已核对'],issue:['badge-issue','件数异常']};
-  var bd = sm[d.status]||sm.pending;
-  var pct = (d.actualPcs!==null&&d.actualPcs!==undefined) ? Math.round(d.actualPcs/d.expectedPcs*100) : 0;
-  var isIssue = d.status==='issue';
-  var act = full ? '<div class="action-row">'+(d.status!=='ok'?'<button class="action-btn primary" onclick="markOk(\''+d.id+'\')"><i class="ti ti-check"></i>标记已核对</button>':'')+'<button class="action-btn" onclick="openModal(\'domestic\',\''+d.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="action-btn danger" onclick="del(\'domestic\',\''+d.id+'\')"><i class="ti ti-trash"></i>删除</button></div>' : '';
-  var detail = full
-    ? '<hr class="divider"><div class="meta-row"><div class="meta-item">取件码<strong style="'+(d.pickupCode?'':'color:#c0392b')+'">'+(d.pickupCode||'⚠ 未填写')+'</strong></div><div class="meta-item">应收<strong>'+d.expectedPcs+' 件</strong></div><div class="meta-item">实收<strong class="'+(isIssue?'miss-tag':'')+'">'+(d.actualPcs!==null&&d.actualPcs!==undefined?d.actualPcs+' 件':'——')+'</strong></div><div class="meta-item">到站<strong>'+(d.arrivalDate||'——')+'</strong></div></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill '+(isIssue?'red':'')+'" style="width:'+pct+'%"></div></div><div class="progress-text">核对完成度 '+pct+'%'+(isIssue?' · 缺少 '+(d.expectedPcs-d.actualPcs)+' 件':'')+'</div></div>':'')+(d.notes?'<div class="note-box '+(isIssue?'warn':'')+'">备注：'+d.notes+'</div>':'')
-    : '<div class="meta-row" style="margin-top:8px"><div class="meta-item">应收 <strong>'+d.expectedPcs+'</strong></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="meta-item '+(isIssue?'miss-tag':'')+'">实收 <strong>'+d.actualPcs+'</strong></div>':'')+'</div>';
-  return '<div class="card"><div class="card-top"><div><div class="card-title"><i class="ti ti-building-store" style="font-size:13px;margin-right:5px"></i>'+d.supplier+'<span class="card-id">'+d.id+'</span></div><div class="card-sub">关联：'+d.ref+' · 驿站：'+d.station+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
-}
-
-function intlCard(i, full) {
-  var sm = {pending:['badge-pending','待发货'],transit:['badge-transit','运输中'],done:['badge-done','已签收'],issue:['badge-issue','异常']};
-  var bd = sm[i.status]||sm.pending;
-  var steps = ['下单','发货','运途','目的地','签收'];
-  var si = {pending:0,transit:2,done:4,issue:2}[i.status]||0;
-  var sh = steps.map(function(s,idx){ var done=idx<=si; return (idx>0?'<div class="step-line '+(done?'done':'')+'"></div>':'')+'<div class="step-node"><div class="step-dot '+(done?'done':'')+'"></div><div class="step-label '+(done?'done':'')+'">'+s+'</div></div>'; }).join('');
-  var mn = !i.trackingNo;
-  var act = full ? '<div class="action-row">'+(mn?'<button class="action-btn primary" onclick="inputTracking(\''+i.id+'\')"><i class="ti ti-input-search"></i>录入运单号</button>':'')+'<button class="action-btn" onclick="openModal(\'international\',\''+i.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="action-btn danger" onclick="del(\'international\',\''+i.id+'\')"><i class="ti ti-trash"></i>删除</button></div>' : '';
-  var detail = full
-    ? '<div class="step-track">'+sh+'</div><hr class="divider"><div class="meta-row"><div class="meta-item">承运商<strong>'+i.carrier+'</strong></div><div class="meta-item">运单号<strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 未获取')+'</strong></div><div class="meta-item">发货日<strong>'+(i.shipDate||'——')+'</strong></div><div class="meta-item">预计到达<strong>'+i.eta+'</strong></div></div>'+(i.lastUpdate?'<div class="note-box"><i class="ti ti-clock" style="font-size:12px;margin-right:4px"></i>'+i.lastUpdate+'</div>':'')+(i.notes?'<div class="note-box">'+i.notes+'</div>':'')
-    : '<div class="meta-row" style="margin-top:8px"><div class="meta-item">'+i.carrier+' <strong style="'+(mn?'color:#c0392b':'')+'">'+(i.trackingNo||'⚠ 运单号缺失')+'</strong></div><div class="meta-item">ETA <strong>'+i.eta+'</strong></div></div>';
-  return '<div class="card"><div class="card-top"><div><div class="card-title"><i class="ti ti-plane" style="font-size:13px;margin-right:5px"></i>'+i.origin+' → '+i.dest+'<span class="card-id">'+i.id+'</span></div><div class="card-sub">关联：'+i.ref+' · '+i.forwarder+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
+  return '<div class="sup-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="display:flex;align-items:flex-start"><div class="sup-av">'+init+'</div><div><div style="font-size:15px;font-weight:600">'+s.name+'</div><div class="sup-contact">'+(s.contact?'<span><i class="ti ti-user" style="font-size:12px;margin-right:3px"></i>'+s.contact+'</span>':'')+(s.phone?'<span><i class="ti ti-phone" style="font-size:12px;margin-right:3px"></i>'+s.phone+'</span>':'')+(s.wechat?'<span><i class="ti ti-brand-wechat" style="font-size:12px;margin-right:3px"></i>'+s.wechat+'</span>':'')+(s.city?'<span><i class="ti ti-map-pin" style="font-size:12px;margin-right:3px"></i>'+s.city+'</span>':'')+(s.shopUrl?'<a href="'+s.shopUrl+'" target="_blank"><i class="ti ti-external-link" style="font-size:12px;margin-right:3px"></i>店铺</a>':'')+'</div>'+(tags?'<div style="margin-top:6px">'+tags+'</div>':'')+'</div></div><div class="ar" style="margin-top:0"><button class="ab" onclick="openModal(\'supplier\',\''+s.id+'\')"><i class="ti ti-edit"></i>编辑</button><button class="ab" onclick="openAddProduct(\''+s.id+'\')"><i class="ti ti-photo-plus"></i>加产品</button><button class="ab d" onclick="delRecord(\'suppliers\',\''+s.id+'\')"><i class="ti ti-trash"></i>删除</button></div></div>'+(s.notes?'<div class="nb" style="margin-top:8px">'+s.notes+'</div>':'')+(prods?'<div class="prod-grid">'+prods+'</div>':'')+'</div>';
 }
 
 // ── Actions ────────────────────────────────────────────────────
-function toggleConfirm(id) {
-  var p = data.purchase.find(function(x){ return x.id===id; });
-  if (!p) return;
-  if (p.status === 'confirmed') {
-    p.status = 'pending';
-    persist('purchase', p);
-  } else {
-    p.status = 'confirmed';
-    persist('purchase', p);
-    var exists = data.domestic.find(function(d){ return d.ref === p.id; });
-    if (!exists) {
-      var nd = {
-        id: 'D'+String(data.domestic.length+1).padStart(3,'0'),
-        ref: p.id,
-        supplier: p.supplier,
-        station: '',
-        pickupCode: '',
-        arrivalDate: '',
-        expectedPcs: p.qty,
-        actualPcs: null,
-        status: 'pending',
-        notes: '由采购 '+p.id+' 自动创建'
-      };
-      data.domestic.push(nd);
-      persist('domestic', nd);
-      toast('采购已确认，国内发货记录已自动创建 ↓');
-      setTimeout(function(){
-        document.querySelectorAll('.nav-item').forEach(function(b){ b.classList.remove('active'); });
-        document.querySelectorAll('.page').forEach(function(t){ t.classList.remove('active'); });
-        document.getElementById('page-domestic').classList.add('active');
-        document.querySelectorAll('.nav-item')[2].classList.add('active');
-        renderAll();
-      }, 1200);
-      return;
-    } else {
-      toast('采购已确认');
-    }
-  }
+function toggleConfirm(id){
+  var p=data.purchase.find(function(x){return x.id===id;});
+  if(!p)return;
+  if(p.status==='confirmed'){p.status='pending';persist();return;}
+  p.status='confirmed';
+  var exists=data.domestic.find(function(d){return d.ref===p.id;});
+  if(!exists){
+    data.domestic.push({id:'D'+String(data.domestic.length+1).padStart(3,'0'),ref:p.id,supplier:p.supplier,station:'',pickupCode:'',arrivalDate:'',expectedPcs:p.qty,actualPcs:null,status:'pending',notes:'由采购 '+p.id+' 自动创建'});
+    toast('已确认付款，国内发货记录已自动创建');
+    persist();
+    setTimeout(function(){
+      document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.page').forEach(function(t){t.classList.remove('active');});
+      document.getElementById('page-domestic').classList.add('active');
+      document.querySelectorAll('.nav-btn')[2].classList.add('active');
+      renderAll();
+    },1200);
+  } else {persist();toast('已确认付款');}
 }
-function markOk(id) {
-  var d = data.domestic.find(function(x){ return x.id===id; });
-  if (!d) return;
-  d.status = 'ok'; persist('domestic', d);
+function markOk(id){
+  var d=data.domestic.find(function(x){return x.id===id;});
+  if(!d)return;d.status='ok';persist();
 }
-function inputTracking(id) {
-  var no = prompt('请输入货代提供的运单号：');
-  if (!no||!no.trim()) return;
-  var i = data.international.find(function(x){ return x.id===id; });
-  if (!i) return;
-  i.trackingNo = no.trim(); i.status = 'transit';
-  persist('international', i); toast('运单号已保存');
+function inputTracking(id){
+  var no=prompt('请输入货代提供的运单号：');
+  if(!no||!no.trim())return;
+  var i=data.international.find(function(x){return x.id===id;});
+  if(!i)return;
+  i.trackingNo=no.trim();i.status='transit';persist();toast('运单号已保存');
 }
-function del(col, id) {
-  if (!confirm('确定要删除吗？')) return;
-  removeRecord(col, id); toast('已删除');
-}
-
-function addTag(e) {
-  if (e.key !== 'Enter') return;
-  var input = document.getElementById('f-stag-input');
-  var val = input.value.trim();
-  if (!val) return;
-  var row = document.getElementById('tag-row');
-  var span = document.createElement('span');
-  span.className = 'tag active';
-  span.onclick = function(){ removeTag(this); };
-  span.textContent = val + ' ×';
-  row.insertBefore(span, input);
-  input.value = '';
-  e.preventDefault();
-}
-function removeTag(el) {
-  el.parentNode.removeChild(el);
-}
-function openLightbox(src) {
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox').classList.add('open');
+function delRecord(col,id){
+  if(!confirm('确定要删除吗？'))return;
+  data[col]=data[col].filter(function(x){return x.id!==id;});
+  persist();toast('已删除');
 }
 
 // ── Modal ──────────────────────────────────────────────────────
-function openModal(type, editId) {
-  currentModal = {type:type, editId:editId||null};
-  var titles = {purchase:editId?'编辑采购需求':'新建采购需求', domestic:editId?'更新发货信息':'录入国内发货', international:editId?'更新运单信息':'新增国际运单'};
-  document.getElementById('modal-title').textContent = titles[type];
-  var existing = null;
-  if (editId) {
-    if (type==='purchase') existing = data.purchase.find(function(x){ return x.id===editId; });
-    if (type==='domestic') existing = data.domestic.find(function(x){ return x.id===editId; });
-    if (type==='international') existing = data.international.find(function(x){ return x.id===editId; });
+function openModal(type,editId){
+  currentModal={type:type,editId:editId||null};
+  var titles={purchase:editId?'编辑采购需求':'新建采购需求',domestic:editId?'更新发货信息':'录入国内发货',international:editId?'更新运单信息':'新增国际运单',supplier:editId?'编辑供应商':'新增供应商',addProduct:'添加产品'};
+  document.getElementById('modal-t').textContent=titles[type]||type;
+  var e={};
+  if(editId){
+    if(type==='purchase')e=data.purchase.find(function(x){return x.id===editId;})||{};
+    if(type==='domestic')e=data.domestic.find(function(x){return x.id===editId;})||{};
+    if(type==='international')e=data.international.find(function(x){return x.id===editId;})||{};
+    if(type==='supplier')e=data.suppliers.find(function(x){return x.id===editId;})||{};
   }
-  var e = existing||{};
-  modalImages = (e.images||[]).slice();
-  modalSupplierReceipts = (e.supplierReceipts||[]).slice();
-  modalCustomerReceipts = (e.customerReceipts||[]).slice();
-  var html = '';
-  if (type==='purchase') {
-    var sz = e.sizes ? Object.entries(e.sizes).map(function(kv){ return kv[0]+':'+kv[1]; }).join(',') : '';
-    html = '<div class="form-group"><label class="form-label">产品名称 *</label><input id="f-product" type="text" value="'+(e.product||'')+'"></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="form-group"><label class="form-label">供应商</label><input id="f-supplier" type="text" list="supplier-list-options" value="'+(e.supplier||'')+'"><datalist id="supplier-list-options">'+data.suppliers.map(function(s){ return '<option value="'+s.name+'">'; }).join('')+'</datalist></div></div>'
-      +'<div class="form-group"><label class="form-label">尺码分配（S:5,M:8,L:6，可不填）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'+'<div class="form-group"><label class="form-label">总数量（不按尺码分配时直接填）</label><input id="f-qty" type="number" placeholder="如：10" value="'+(e.directQty||'')+'"></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">颜色</label><input id="f-color" type="text" value="'+(e.color||'')+'"></div><div class="form-group"><label class="form-label">截止日期</label><input id="f-deadline" type="date" value="'+(e.deadline||'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>'
-      +'<div class="form-group"><label class="form-label">商品图片</label><div class="img-upload-box" onclick="document.getElementById(\'f-img-input\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-img-input" type="file" accept="image/*" multiple style="display:none" onchange="handleImgUpload(this)"><div class="img-preview-grid" id="img-preview-grid">'+buildImgPreviews(modalImages)+'</div></div>'
-      +'<hr style="border:none;border-top:0.5px solid var(--border);margin:14px 0">'
-      +'<div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px;">💰 财务信息</div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">供应商付款金额（人民币 ¥）</label><input id="f-supplierAmount" type="number" placeholder="0.00" value="'+(e.supplierAmount||'')+'"></div><div class="form-group"><label class="form-label">供应商付款状态</label><select id="f-supplierPayStatus"><option value="unpaid"'+(( e.supplierPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待付款</option><option value="paid"'+((e.supplierPayStatus)==='paid'?' selected':'')+'>已付款</option><option value="partial"'+((e.supplierPayStatus)==='partial'?' selected':'')+'>部分付</option></select></div></div>'
-      +'<div class="form-group"><label class="form-label">供应商付款截图</label><div class="img-upload-box" onclick="document.getElementById(\'f-sr-input\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传付款凭证</div><input id="f-sr-input" type="file" accept="image/*" multiple style="display:none" onchange="handleReceiptUpload(this,\'supplier\')"><div class="img-preview-grid" id="sr-preview-grid">'+buildImgPreviews(modalSupplierReceipts)+'</div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">客户收款金额（美金 $）</label><input id="f-customerAmount" type="number" placeholder="0.00" value="'+(e.customerAmount||'')+'"></div><div class="form-group"><label class="form-label">客户收款状态</label><select id="f-customerPayStatus"><option value="unpaid"'+((e.customerPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待收款</option><option value="paid"'+((e.customerPayStatus)==='paid'?' selected':'')+'>已收款</option><option value="partial"'+((e.customerPayStatus)==='partial'?' selected':'')+'>部分收</option></select></div></div>'
-      +'<div class="form-group"><label class="form-label">客户收款截图</label><div class="img-upload-box" onclick="document.getElementById(\'f-cr-input\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传收款凭证</div><input id="f-cr-input" type="file" accept="image/*" multiple style="display:none" onchange="handleReceiptUpload(this,\'customer\')"><div class="img-preview-grid" id="cr-preview-grid">'+buildImgPreviews(modalCustomerReceipts)+'</div></div>';
-  } else if (type==='supplier') {
-    var existingTags = (e.tags||[]);
-    html = '<div class="form-group"><label class="form-label">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="form-group"><label class="form-label">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="form-group"><label class="form-label">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
-      +'<div class="form-group"><label class="form-label">标签（回车添加）</label><div class="tag-input-row" id="tag-row">'+existingTags.map(function(t){ return '<span class="tag active" onclick="removeTag(this)">'+t+' ×</span>'; }).join('')+'<input class="tag-input" id="f-stag-input" placeholder="输入标签后回车" onkeydown="addTag(event)"></div></div>'
-      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
-  } else if (type==='domestic') {
-    html = '<div class="form-row"><div class="form-group"><label class="form-label">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="form-group"><label class="form-label">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">菜鸟驿站</label><input id="f-station" type="text" value="'+(e.station||'')+'"></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">取件码</label><input id="f-pickupCode" type="text" value="'+(e.pickupCode||'')+'"></div><div class="form-group"><label class="form-label">到站日期</label><input id="f-arrivalDate" type="date" value="'+(e.arrivalDate||'')+'"></div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">应收件数</label><input id="f-expectedPcs" type="number" value="'+(e.expectedPcs||'')+'"></div><div class="form-group"><label class="form-label">实收件数</label><input id="f-actualPcs" type="number" value="'+(e.actualPcs!==null&&e.actualPcs!==undefined?e.actualPcs:'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
-  } else {
-    var cars = ['DHL','FedEx','UPS','EMS','顺丰国际','其他'];
-    var co = cars.map(function(c){ return '<option'+((e.carrier||'DHL')===c?' selected':'')+'>'+c+'</option>'; }).join('');
-    var sts = [{v:'pending',l:'待发货'},{v:'transit',l:'运输中'},{v:'done',l:'已签收'},{v:'issue',l:'异常'}];
-    var so = sts.map(function(s){ return '<option value="'+s.v+'"'+((e.status||'pending')===s.v?' selected':'')+'>'+s.l+'</option>'; }).join('');
-    html = '<div class="form-row"><div class="form-group"><label class="form-label">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="form-group"><label class="form-label">货代公司</label><input id="f-forwarder" type="text" value="'+(e.forwarder||'')+'"></div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">承运商</label><select id="f-carrier">'+co+'</select></div><div class="form-group"><label class="form-label">运单号</label><input id="f-trackingNo" type="text" value="'+(e.trackingNo||'')+'"></div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">出发城市</label><input id="f-origin" type="text" value="'+(e.origin||'')+'"></div><div class="form-group"><label class="form-label">目的地</label><input id="f-dest" type="text" value="'+(e.dest||'')+'"></div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">发货日期</label><input id="f-shipDate" type="date" value="'+(e.shipDate||'')+'"></div><div class="form-group"><label class="form-label">预计到达</label><input id="f-eta" type="date" value="'+(e.eta||'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">当前状态</label><select id="f-status">'+so+'</select></div>'
-      +'<div class="form-group"><label class="form-label">最新动态</label><input id="f-lastUpdate" type="text" value="'+(e.lastUpdate||'')+'"></div>'
-      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
+  mImgs=(e.images||[]).slice();
+  mSupReceipts=(e.supplierReceipts||[]).slice();
+  mCustReceipts=(e.customerReceipts||[]).slice();
+  mProdImg=null;
+  var supOptions=data.suppliers.map(function(s){return '<option value="'+s.name+'">';}).join('');
+  var h='';
+  if(type==='purchase'){
+    var sz=e.sizes?Object.entries(e.sizes).map(function(kv){return kv[0]+':'+kv[1];}).join(','):'';
+    h='<div class="fg"><label class="fl">产品名称 *</label><input id="f-product" type="text" value="'+(e.product||'')+'"></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">客户名称</label><input id="f-client" type="text" value="'+(e.client||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" list="sup-opts" value="'+(e.supplier||'')+'"><datalist id="sup-opts">'+supOptions+'</datalist></div></div>'
+      +'<div class="fg"><label class="fl">尺码分配（S:5,M:8,L:6 可不填）</label><input id="f-sizes" type="text" placeholder="XS:2,S:5,M:8" value="'+sz+'"></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">总数量（不按尺码时填）</label><input id="f-qty" type="number" placeholder="0" value="'+(e.directQty||e.qty||'')+'"></div><div class="fg"><label class="fl">颜色</label><input id="f-color" type="text" value="'+(e.color||'')+'"></div></div>'
+      +'<div class="fg"><label class="fl">截止日期</label><input id="f-deadline" type="date" value="'+(e.deadline||'')+'"></div>'
+      +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>'
+      +'<div class="fg"><label class="fl">商品图片</label><div class="upload-box" onclick="document.getElementById(\'f-imgs\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>点击上传图片</div><input id="f-imgs" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'main\')"><div class="img-prev" id="prev-main">'+buildPrev(mImgs,'main')+'</div></div>'
+      +'<hr style="border:none;border-top:.5px solid var(--border);margin:14px 0">'
+      +'<div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:10px">💰 财务信息</div>'
+      +'<div class="fr"><div class="fg"><label class="fl">供应商付款金额（¥）</label><input id="f-sAmt" type="number" placeholder="0.00" value="'+(e.supplierAmount||'')+'"></div><div class="fg"><label class="fl">供应商付款状态</label><select id="f-sSt"><option value="unpaid"'+((e.supplierPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待付款</option><option value="paid"'+(e.supplierPayStatus==='paid'?' selected':'')+'>已付款</option><option value="partial"'+(e.supplierPayStatus==='partial'?' selected':'')+'>部分付</option></select></div></div>'
+      +'<div class="fg"><label class="fl">供应商付款截图</label><div class="upload-box" onclick="document.getElementById(\'f-sr\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传付款凭证</div><input id="f-sr" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'sup\')"><div class="img-prev" id="prev-sup">'+buildPrev(mSupReceipts,'sup')+'</div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">客户收款金额（$）</label><input id="f-cAmt" type="number" placeholder="0.00" value="'+(e.customerAmount||'')+'"></div><div class="fg"><label class="fl">客户收款状态</label><select id="f-cSt"><option value="unpaid"'+((e.customerPayStatus||'unpaid')==='unpaid'?' selected':'')+'>待收款</option><option value="paid"'+(e.customerPayStatus==='paid'?' selected':'')+'>已收款</option><option value="partial"'+(e.customerPayStatus==='partial'?' selected':'')+'>部分收</option></select></div></div>'
+      +'<div class="fg"><label class="fl">客户收款截图</label><div class="upload-box" onclick="document.getElementById(\'f-cr\').click()"><i class="ti ti-receipt" style="font-size:18px;display:block;margin-bottom:4px"></i>上传收款截图</div><input id="f-cr" type="file" accept="image/*" multiple style="display:none" onchange="handleImgs(this,\'cust\')"><div class="img-prev" id="prev-cust">'+buildPrev(mCustReceipts,'cust')+'</div></div>';
+  } else if(type==='domestic'){
+    h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
+      +'<div class="fg"><label class="fl">菜鸟驿站</label><input id="f-station" type="text" value="'+(e.station||'')+'"></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">取件码</label><input id="f-pickupCode" type="text" value="'+(e.pickupCode||'')+'"></div><div class="fg"><label class="fl">到站日期</label><input id="f-arrivalDate" type="date" value="'+(e.arrivalDate||'')+'"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">应收件数</label><input id="f-expectedPcs" type="number" value="'+(e.expectedPcs||'')+'"></div><div class="fg"><label class="fl">实收件数</label><input id="f-actualPcs" type="number" value="'+(e.actualPcs!==null&&e.actualPcs!==undefined?e.actualPcs:'')+'"></div></div>'
+      +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
+  } else if(type==='international'){
+    var cars=['DHL','FedEx','UPS','EMS','顺丰国际','其他'];
+    var co=cars.map(function(c){return '<option'+((e.carrier||'DHL')===c?' selected':'')+'>'+c+'</option>';}).join('');
+    var sts=[{v:'pending',l:'待发货'},{v:'transit',l:'运输中'},{v:'done',l:'已签收'},{v:'issue',l:'异常'}];
+    var so=sts.map(function(s){return '<option value="'+s.v+'"'+((e.status||'pending')===s.v?' selected':'')+'>'+s.l+'</option>';}).join('');
+    h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">货代公司</label><input id="f-forwarder" type="text" value="'+(e.forwarder||'')+'"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">承运商</label><select id="f-carrier">'+co+'</select></div><div class="fg"><label class="fl">运单号</label><input id="f-trackingNo" type="text" value="'+(e.trackingNo||'')+'"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">出发城市</label><input id="f-origin" type="text" value="'+(e.origin||'')+'"></div><div class="fg"><label class="fl">目的地</label><input id="f-dest" type="text" value="'+(e.dest||'')+'"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">发货日期</label><input id="f-shipDate" type="date" value="'+(e.shipDate||'')+'"></div><div class="fg"><label class="fl">预计到达</label><input id="f-eta" type="date" value="'+(e.eta||'')+'"></div></div>'
+      +'<div class="fg"><label class="fl">当前状态</label><select id="f-status">'+so+'</select></div>'
+      +'<div class="fg"><label class="fl">最新动态</label><input id="f-lastUpdate" type="text" value="'+(e.lastUpdate||'')+'"></div>'
+      +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
+  } else if(type==='supplier'){
+    var existTags=e.tags||[];
+    h='<div class="fg"><label class="fl">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="fg"><label class="fl">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="fg"><label class="fl">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
+      +'<div class="fg"><label class="fl">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
+      +'<div class="fg"><label class="fl">标签（输入后回车添加）</label><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px;background:var(--surface2);border:.5px solid var(--border2);border-radius:8px;min-height:40px" id="tag-row">'+existTags.map(function(t){return '<span class="tag active" onclick="this.remove()">'+t+' ×</span>';}).join('')+'<input class="tag-input" id="tag-inp" placeholder="输入标签后回车" onkeydown="addTag(event)" style="border:none;background:transparent;outline:none;flex:1;min-width:80px"></div></div>'
+      +'<div class="fg"><label class="fl">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
+  } else if(type==='addProduct'){
+    h='<div class="fg"><label class="fl">产品名称</label><input id="f-pname" type="text" placeholder="如：LV黑色运动鞋"></div>'
+      +'<div class="fr"><div class="fg"><label class="fl">价格（¥）</label><input id="f-pprice" type="number" placeholder="0"></div><div class="fg"><label class="fl">备注（尺码/颜色等）</label><input id="f-pnote" type="text"></div></div>'
+      +'<div class="fg"><label class="fl">产品图片</label><div class="upload-box" onclick="document.getElementById(\'f-pimg\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>上传产品图</div><input id="f-pimg" type="file" accept="image/*" style="display:none" onchange="handleProdImg(this)"><div id="pimg-prev" style="margin-top:8px"></div></div>';
   }
-  document.getElementById('modal-body').innerHTML = html;
-  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-body').innerHTML=h;
+  document.getElementById('modal-ov').classList.add('open');
 }
 
-function buildImgPreviews(imgs) {
-  return imgs.map(function(src,idx){ return '<div class="img-preview-item"><img src="'+src+'"><button class="img-del-btn" onclick="removeModalImg('+idx+')">×</button></div>'; }).join('');
+function closeModal(){document.getElementById('modal-ov').classList.remove('open');currentModal=null;}
+
+function buildPrev(imgs,key){
+  return imgs.map(function(src,idx){return '<div class="ip-item"><img src="'+src+'"><button class="ip-del" onclick="removeImg(\''+key+'\','+idx+')">×</button></div>';}).join('');
 }
-function handleImgUpload(input) {
+function handleImgs(input,key){
   Array.from(input.files).forEach(function(file){
-    var reader = new FileReader();
-    reader.onload = function(e){
-      modalImages.push(e.target.result);
-      var g = document.getElementById('img-preview-grid');
-      if (g) g.innerHTML = buildImgPreviews(modalImages);
-    };
-    reader.readAsDataURL(file);
-  });
-  input.value = '';
+    var r=new FileReader();
+    r.onload=function(e){
+      if(key==='main'){mImgs.push(e.target.result);var el=document.getElementById('prev-main');if(el)el.innerHTML=buildPrev(mImgs,'main');}
+      else if(key==='sup'){mSupReceipts.push(e.target.result);var el=document.getElementById('prev-sup');if(el)el.innerHTML=buildPrev(mSupReceipts,'sup');}
+      else if(key==='cust'){mCustReceipts.push(e.target.result);var el=document.getElementById('prev-cust');if(el)el.innerHTML=buildPrev(mCustReceipts,'cust');}
+    };r.readAsDataURL(file);
+  });input.value='';
 }
-function handleReceiptUpload(input, type) {
-  Array.from(input.files).forEach(function(file){
-    var reader = new FileReader();
-    reader.onload = function(ev){
-      if (type === 'supplier') {
-        modalSupplierReceipts.push(ev.target.result);
-        var g = document.getElementById('sr-preview-grid');
-        if (g) g.innerHTML = buildImgPreviews(modalSupplierReceipts);
-      } else {
-        modalCustomerReceipts.push(ev.target.result);
-        var g = document.getElementById('cr-preview-grid');
-        if (g) g.innerHTML = buildImgPreviews(modalCustomerReceipts);
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-  input.value = '';
+function removeImg(key,idx){
+  if(key==='main'){mImgs.splice(idx,1);var el=document.getElementById('prev-main');if(el)el.innerHTML=buildPrev(mImgs,'main');}
+  else if(key==='sup'){mSupReceipts.splice(idx,1);var el=document.getElementById('prev-sup');if(el)el.innerHTML=buildPrev(mSupReceipts,'sup');}
+  else if(key==='cust'){mCustReceipts.splice(idx,1);var el=document.getElementById('prev-cust');if(el)el.innerHTML=buildPrev(mCustReceipts,'cust');}
 }
-function removeModalImg(idx) {
-  modalImages.splice(idx,1);
-  var g = document.getElementById('img-preview-grid');
-  if (g) g.innerHTML = buildImgPreviews(modalImages);
+function handleProdImg(input){
+  var file=input.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){mProdImg=e.target.result;var el=document.getElementById('pimg-prev');if(el)el.innerHTML='<img src="'+mProdImg+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px">';};
+  r.readAsDataURL(file);
+}
+function addTag(e){
+  if(e.key!=='Enter')return;e.preventDefault();
+  var inp=document.getElementById('tag-inp');
+  var val=inp.value.trim();if(!val)return;
+  var row=document.getElementById('tag-row');
+  var span=document.createElement('span');
+  span.className='tag active';span.onclick=function(){this.remove();};
+  span.textContent=val+' ×';row.insertBefore(span,inp);inp.value='';
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  currentModal = null;
-}
+function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
-function g(id) { var el=document.getElementById(id); return el?el.value.trim():''; }
-
-function saveModal() {
+function saveModal(){
   var type=currentModal.type, editId=currentModal.editId;
-  if (type==='addProduct') {
-    var s = data.suppliers.find(function(x){ return x.id===editId; });
-    if (s) {
-      if (!s.products) s.products = [];
-      s.products.push({ name:g('f-pname'), price:parseFloat(g('f-pprice'))||0, note:g('f-pnote'), image:pendingProductImg||'' });
-      persist('suppliers', s);
-      pendingProductImg = null;
-    }
-    closeModal(); return;
+  if(type==='addProduct'){
+    var s=data.suppliers.find(function(x){return x.id===editId;});
+    if(s){if(!s.products)s.products=[];s.products.push({name:g('f-pname'),price:parseFloat(g('f-pprice'))||0,note:g('f-pnote'),image:mProdImg||''});}
+    persist();closeModal();toast('产品已添加');return;
   }
-  if (type==='supplier') {
-    var tags = Array.from(document.querySelectorAll('#tag-row .tag.active')).map(function(el){ return el.textContent.replace(' ×','').trim(); });
-    if (editId) {
-      var sv = data.suppliers.find(function(x){ return x.id===editId; });
+  if(type==='supplier'){
+    var tags=Array.from(document.querySelectorAll('#tag-row .tag.active')).map(function(el){return el.textContent.replace(' ×','').trim();});
+    if(editId){
+      var sv=data.suppliers.find(function(x){return x.id===editId;});
       Object.assign(sv,{name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes')});
-      persist('suppliers',sv);
     } else {
-      var ns={id:'S'+String(data.suppliers.length+1).padStart(3,'0'),name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes'),products:[]};
-      data.suppliers.push(ns); persist('suppliers',ns);
+      data.suppliers.push({id:'S'+String(data.suppliers.length+1).padStart(3,'0'),name:g('f-sname'),contact:g('f-scontact'),city:g('f-scity'),phone:g('f-sphone'),wechat:g('f-swechat'),shopUrl:g('f-sshop'),tags:tags,notes:g('f-snotes'),products:[]});
     }
-    closeModal(); toast('已保存'); return;
+    persist();closeModal();toast('已保存');return;
   }
-  if (type==='purchase') {
-    var sz=g('f-sizes'), sizes={};
-    sz.split(',').forEach(function(s){ var p=s.split(':'); if(p[0]&&p[1]) sizes[p[0].trim()]=parseInt(p[1])||0; });
-    var directQty=parseInt(g('f-qty'))||0;
-var qty=Object.values(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):(directQty||0);
-    if (editId) {
-      var p=data.purchase.find(function(x){return x.id===editId;});
-      Object.assign(p,{product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),notes:g('f-notes'),images:modalImages.slice(),supplierAmount:parseFloat(g('f-supplierAmount'))||0,supplierPayStatus:document.getElementById('f-supplierPayStatus').value,supplierReceipts:modalSupplierReceipts.slice(),customerAmount:parseFloat(g('f-customerAmount'))||0,customerPayStatus:document.getElementById('f-customerPayStatus').value,customerReceipts:modalCustomerReceipts.slice()});
-      persist('purchase',p);
-    } else {
-      var np={id:'P'+String(data.purchase.length+1).padStart(3,'0'),product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:directQty,deadline:g('f-deadline'),status:'pending',notes:g('f-notes'),images:modalImages.slice(),supplierAmount:parseFloat(g('f-supplierAmount'))||0,supplierPayStatus:document.getElementById('f-supplierPayStatus').value,supplierReceipts:modalSupplierReceipts.slice(),customerAmount:parseFloat(g('f-customerAmount'))||0,customerPayStatus:document.getElementById('f-customerPayStatus').value,customerReceipts:modalCustomerReceipts.slice()};
-      data.purchase.push(np); persist('purchase',np);
-    }
-  } else if (type==='supplier') {
-    var existingTags = (e.tags||[]);
-    html = '<div class="form-group"><label class="form-label">供应商名称 *</label><input id="f-sname" type="text" value="'+(e.name||'')+'"></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">联系人</label><input id="f-scontact" type="text" value="'+(e.contact||'')+'"></div><div class="form-group"><label class="form-label">所在城市</label><input id="f-scity" type="text" value="'+(e.city||'')+'"></div></div>'
-      +'<div class="form-row"><div class="form-group"><label class="form-label">电话</label><input id="f-sphone" type="text" value="'+(e.phone||'')+'"></div><div class="form-group"><label class="form-label">微信</label><input id="f-swechat" type="text" value="'+(e.wechat||'')+'"></div></div>'
-      +'<div class="form-group"><label class="form-label">店铺链接</label><input id="f-sshop" type="text" placeholder="https://..." value="'+(e.shopUrl||'')+'"></div>'
-      +'<div class="form-group"><label class="form-label">标签（回车添加）</label><div class="tag-input-row" id="tag-row">'+existingTags.map(function(t){ return '<span class="tag active" onclick="removeTag(this)">'+t+' ×</span>'; }).join('')+'<input class="tag-input" id="f-stag-input" placeholder="输入标签后回车" onkeydown="addTag(event)"></div></div>'
-      +'<div class="form-group"><label class="form-label">备注</label><textarea id="f-snotes">'+(e.notes||'')+'</textarea></div>';
-  } else if (type==='domestic') {
-    var exp=parseInt(g('f-expectedPcs'))||0, ar=g('f-actualPcs'), act=ar!==''?parseInt(ar):null;
+  if(type==='purchase'){
+    var sz=g('f-sizes'),sizes={};
+    sz.split(',').forEach(function(s){var p=s.split(':');if(p[0]&&p[1])sizes[p[0].trim()]=parseInt(p[1])||0;});
+    var dqty=parseInt(g('f-qty'))||0;
+    var qty=Object.keys(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):dqty;
+    var obj={product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:dqty,deadline:g('f-deadline'),notes:g('f-notes'),images:mImgs.slice(),supplierAmount:parseFloat(g('f-sAmt'))||0,supplierPayStatus:document.getElementById('f-sSt').value,supplierReceipts:mSupReceipts.slice(),customerAmount:parseFloat(g('f-cAmt'))||0,customerPayStatus:document.getElementById('f-cSt').value,customerReceipts:mCustReceipts.slice()};
+    if(editId){Object.assign(data.purchase.find(function(x){return x.id===editId;}),obj);}
+    else{obj.id='P'+String(data.purchase.length+1).padStart(3,'0');obj.status='pending';data.purchase.push(obj);}
+  } else if(type==='domestic'){
+    var exp=parseInt(g('f-expectedPcs'))||0,ar=g('f-actualPcs'),act=ar!==''?parseInt(ar):null;
     var st=act!==null?(act<exp?'issue':'ok'):'pending';
-    if (editId) {
-      var d=data.domestic.find(function(x){return x.id===editId;});
-      Object.assign(d,{ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')});
-      persist('domestic',d);
-    } else {
-      var nd={id:'D'+String(data.domestic.length+1).padStart(3,'0'),ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')};
-      data.domestic.push(nd); persist('domestic',nd);
-    }
-  } else {
-    var car=document.getElementById('f-carrier').value, ist=document.getElementById('f-status').value;
-    if (editId) {
-      var ii=data.international.find(function(x){return x.id===editId;});
-      Object.assign(ii,{ref:g('f-ref'),forwarder:g('f-forwarder'),carrier:car,trackingNo:g('f-trackingNo'),origin:g('f-origin'),dest:g('f-dest'),shipDate:g('f-shipDate'),eta:g('f-eta'),status:ist,lastUpdate:g('f-lastUpdate'),notes:g('f-notes')});
-      persist('international',ii);
-    } else {
-      var ni={id:'I'+String(data.international.length+1).padStart(3,'0'),ref:g('f-ref'),forwarder:g('f-forwarder'),carrier:car,trackingNo:g('f-trackingNo'),origin:g('f-origin'),dest:g('f-dest'),shipDate:g('f-shipDate'),eta:g('f-eta'),status:ist,lastUpdate:g('f-lastUpdate'),notes:g('f-notes')};
-      data.international.push(ni); persist('international',ni);
-    }
+    var obj={ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')};
+    if(editId){Object.assign(data.domestic.find(function(x){return x.id===editId;}),obj);}
+    else{obj.id='D'+String(data.domestic.length+1).padStart(3,'0');data.domestic.push(obj);}
+  } else if(type==='international'){
+    var car=document.getElementById('f-carrier').value,ist=document.getElementById('f-status').value;
+    var obj={ref:g('f-ref'),forwarder:g('f-forwarder'),carrier:car,trackingNo:g('f-trackingNo'),origin:g('f-origin'),dest:g('f-dest'),shipDate:g('f-shipDate'),eta:g('f-eta'),status:ist,lastUpdate:g('f-lastUpdate'),notes:g('f-notes')};
+    if(editId){Object.assign(data.international.find(function(x){return x.id===editId;}),obj);}
+    else{obj.id='I'+String(data.international.length+1).padStart(3,'0');data.international.push(obj);}
   }
-  closeModal(); toast('已保存');
+  persist();closeModal();toast('已保存');
+}
+
+function openAddProduct(sid){
+  currentModal={type:'addProduct',editId:sid};
+  var s=data.suppliers.find(function(x){return x.id===sid;});
+  document.getElementById('modal-t').textContent='添加产品'+(s?' — '+s.name:'');
+  mProdImg=null;
+  document.getElementById('modal-body').innerHTML='<div class="fg"><label class="fl">产品名称</label><input id="f-pname" type="text" placeholder="如：LV黑色运动鞋"></div><div class="fr"><div class="fg"><label class="fl">价格（¥）</label><input id="f-pprice" type="number" placeholder="0"></div><div class="fg"><label class="fl">备注</label><input id="f-pnote" type="text"></div></div><div class="fg"><label class="fl">产品图片</label><div class="upload-box" onclick="document.getElementById(\'f-pimg\').click()"><i class="ti ti-photo" style="font-size:20px;display:block;margin-bottom:4px"></i>上传产品图</div><input id="f-pimg" type="file" accept="image/*" style="display:none" onchange="handleProdImg(this)"><div id="pimg-prev" style="margin-top:8px"></div></div>';
+  document.getElementById('modal-ov').classList.add('open');
 }
 
 // ── Export / Import ────────────────────────────────────────────
-function exportData() {
-  var blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'runavasto_backup_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click(); toast('备份文件已下载');
+function exportData(){
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='runavasto_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('备份已下载');
 }
-function importData() {
-  var input = document.createElement('input');
-  input.type='file'; input.accept='.json';
-  input.onchange = function(e) {
-    var file=e.target.files[0]; if(!file) return;
-    var reader=new FileReader();
-    reader.onload=function(ev){
-      try {
+function importData(){
+  var inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=function(e){
+    var file=e.target.files[0];if(!file)return;
+    var r=new FileReader();
+    r.onload=function(ev){
+      try{
         var imp=JSON.parse(ev.target.result);
-        if(!imp.purchase||!imp.domestic||!imp.international) throw new Error();
-        if(!confirm('导入后将覆盖当前所有数据，确定吗？')) return;
-        data=imp; saveLocal();
-        if(useCloud) pushCloud();
-        renderAll(); toast('导入成功');
-      } catch(err){ alert('文件格式错误'); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
+        if(!imp.purchase)throw new Error();
+        if(!confirm('导入将覆盖当前所有数据，确定吗？'))return;
+        data=imp;if(!data.suppliers)data.suppliers=[];
+        saveLocal();if(useCloud)pushCloud();renderAll();toast('导入成功');
+      }catch(err){alert('文件格式错误');}
+    };r.readAsText(file);
+  };inp.click();
 }
 </script>
 </body>
