@@ -276,19 +276,32 @@ function connectCloud(cfg){
 }
 function fetchCloud(){
   if(!binId||!apiKey)return;
+  var lt=data.purchase.length+data.domestic.length+data.international.length;
   fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':apiKey}})
-  .then(function(r){return r.json();})
-  .then(function(res){
-    if(res.record&&res.record.purchase){
-      if(!res.record.suppliers)res.record.suppliers=[];
-      var ct=(res.record.purchase||[]).length+(res.record.domestic||[]).length+(res.record.international||[]).length;
-      var lt=data.purchase.length+data.domestic.length+data.international.length;
-      if(ct===0&&lt>0){pushCloud();}
-      else if(ct>0){data=res.record;if(!data.suppliers)data.suppliers=[];saveLocal();renderAll();}
-      setSS('ok','已同步');
-    } else {if(lt>0)pushCloud();setSS('ok','已同步');}
+  .then(function(r){
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    return r.json();
   })
-  .catch(function(){setSS('err','读取失败');});
+  .then(function(res){
+    try{
+      if(res.record&&res.record.purchase){
+        if(!res.record.suppliers)res.record.suppliers=[];
+        var ct=(res.record.purchase||[]).length+(res.record.domestic||[]).length+(res.record.international||[]).length;
+        if(ct===0&&lt>0){pushCloud();}
+        else if(ct>0){data=res.record;if(!data.suppliers)data.suppliers=[];saveLocal();renderAll();}
+        setSS('ok','已同步');
+      } else {
+        if(lt>0)pushCloud();
+        setSS('ok','已同步');
+      }
+    }catch(e){console.error('fetchCloud parse error',e);setSS('err','数据解析失败');}
+  })
+  .catch(function(err){
+    console.error('fetchCloud error',err);
+    setSS('err','读取失败，使用本地数据');
+    // Don't block UI - just use local data
+    renderAll();
+  });
 }
 function pushCloud(){
   if(!binId||!apiKey)return;
@@ -325,9 +338,20 @@ function reconfigure(){
   document.getElementById('setup-ov').style.display='flex';
 }
 (function init(){
-  var s=localStorage.getItem(LS_CFG);
-  if(s){loadLocal();renderAll();try{connectCloud(JSON.parse(s));}catch(e){setSS('err','云端不可用');}}
-  else{loadLocal();renderAll();document.getElementById('setup-ov').style.display='flex';}
+  try{
+    var s=localStorage.getItem(LS_CFG);
+    loadLocal();
+    renderAll();
+    if(s){
+      try{connectCloud(JSON.parse(s));}
+      catch(e){console.error('connectCloud init error',e);setSS('err','云端配置有误');}
+    } else {
+      document.getElementById('setup-ov').style.display='flex';
+    }
+  }catch(e){
+    console.error('init error',e);
+    renderAll();
+  }
 })();
 
 // ── Nav ────────────────────────────────────────────────────────
@@ -512,7 +536,7 @@ function delRecord(col,id){
 }
 
 // ── Modal ──────────────────────────────────────────────────────
-function openModal(type,editId){
+function openModal(type,editId){try{
   currentModal={type:type,editId:editId||null};
   var titles={purchase:editId?'编辑采购需求':'新建采购需求',domestic:editId?'更新发货信息':'录入国内发货',international:editId?'更新运单信息':'新增国际运单',supplier:editId?'编辑供应商':'新增供应商',addProduct:'添加产品'};
   document.getElementById('modal-t').textContent=titles[type]||type;
@@ -577,7 +601,7 @@ function openModal(type,editId){
   }
   document.getElementById('modal-body').innerHTML=h;
   document.getElementById('modal-ov').classList.add('open');
-}
+}catch(e){console.error('openModal error',e);alert('打开表单出错：'+e.message);}}
 
 function closeModal(){document.getElementById('modal-ov').classList.remove('open');currentModal=null;}
 
@@ -617,7 +641,7 @@ function addTag(e){
 
 function g(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 
-function saveModal(){
+function saveModal(){try{
   var type=currentModal.type, editId=currentModal.editId;
   if(type==='addProduct'){
     var s=data.suppliers.find(function(x){return x.id===editId;});
@@ -655,7 +679,7 @@ function saveModal(){
     else{obj.id='I'+String(data.international.length+1).padStart(3,'0');data.international.push(obj);}
   }
   persist();closeModal();toast('已保存');
-}
+}catch(e){console.error('saveModal error',e);alert('保存出错：'+e.message);}}
 
 function openAddProduct(sid){
   currentModal={type:'addProduct',editId:sid};
