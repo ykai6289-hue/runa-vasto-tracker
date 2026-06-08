@@ -297,7 +297,22 @@ function fromFbDoc(doc){
     else if(fv.integerValue!==undefined)obj[k]=parseInt(fv.integerValue);
     else if(fv.stringValue!==undefined){
       var s=fv.stringValue;
-      try{if((s.startsWith('{')||s.startsWith('['))&&s.length>2)obj[k]=JSON.parse(s);else obj[k]=s;}
+      try{
+        if((s.startsWith('{')||s.startsWith('['))&&s.length>2){
+          var parsed=JSON.parse(s);
+          // Fix sizes: filter out malformed entries like {0:{}, 1:{}}
+          if(k==='sizes'&&typeof parsed==='object'&&!Array.isArray(parsed)){
+            var cleaned={};
+            Object.keys(parsed).forEach(function(key){
+              var val=parsed[key];
+              if(typeof val==='number'&&val>0) cleaned[key]=val;
+            });
+            obj[k]=Object.keys(cleaned).length>0?cleaned:parsed;
+          } else {
+            obj[k]=parsed;
+          }
+        } else {obj[k]=s;}
+      }
       catch(e){obj[k]=s;}
     }
     else if(fv.arrayValue!==undefined){
@@ -507,7 +522,9 @@ function renderIntl(){
 function purCard(p,full){
   var bm={confirmed:['bc','已付款'],pending:['bp','待付款']};
   var bd=bm[p.status]||bm.pending;
-  var st=Object.entries(p.sizes||{}).map(function(e){return '<span class="sc">'+e[0]+' × '+e[1]+'</span>';}).join('');
+  var rawSizes=p.sizes||{};
+  if(typeof rawSizes==='string'){try{rawSizes=JSON.parse(rawSizes);}catch(e){rawSizes={};}}
+  var st=Object.entries(rawSizes).filter(function(e){return e[0]&&typeof e[1]==='number';}).map(function(e){return '<span class="sc">'+e[0]+' × '+e[1]+'</span>';}).join('');
   var pimgs=(p.images&&p.images.length)?'<div class="imgs">'+p.images.map(function(s){return '<img class="img-t" src="'+s+'" onclick="openLightbox(this.src)">';}).join('')+'</div>':'';
   var fin='';
   if(full){
@@ -542,7 +559,7 @@ function domCard(d,full){
   var isI=d.status==='issue';
   var act=full?'<div class="ar">'+(d.status!=='ok'?'<button class="ab p" onclick="markOk(\''+d.id+'\')"><i class="ti ti-check"></i>标记已核对</button>':'')+'<button class="ab" onclick="openModal(\'domestic\',\''+d.id+'\')"><i class="ti ti-edit"></i>更新</button><button class="ab d" onclick="delRecord(\'domestic\',\''+d.id+'\')"><i class="ti ti-trash"></i>删除</button></div>':'';
   var detail=full
-    ?'<hr class="div"><div class="mr"><div class="mi">取件码<strong style="'+(d.pickupCode?'':'color:#c0392b')+'">'+(d.pickupCode||'⚠ 未填写')+'</strong></div><div class="mi">应收<strong>'+(d.expectedPcs||0)+' 件</strong></div><div class="mi">实收<strong style="'+(isI?'color:#c0392b':'')+'">'+(d.actualPcs!==null&&d.actualPcs!==undefined?d.actualPcs+' 件':'——')+'</strong></div><div class="mi">到站<strong>'+(d.arrivalDate||'——')+'</strong></div></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="pb"><div class="pbar"><div class="pfill '+(isI?'red':'')+'" style="width:'+pct+'%"></div></div><div class="pt2">核对完成度 '+pct+'%'+(isI?' · 缺少 '+(d.expectedPcs-d.actualPcs)+' 件':'')+'</div></div>':'')+(d.notes?'<div class="nb '+(isI?'warn':'')+'">备注：'+d.notes+'</div>':'')
+    ?'<hr class="div"><div class="mr">'+(d.dTrackingNo?'<div class="mi">国内物流单号<strong>'+d.dTrackingNo+'</strong></div>':'')+'<div class="mi">取件码<strong style="'+(d.pickupCode?'':'color:#c0392b')+'">'+(d.pickupCode||'⚠ 未填写')+'</strong></div><div class="mi">应收<strong>'+(d.expectedPcs||0)+' 件</strong></div><div class="mi">实收<strong style="'+(isI?'color:#c0392b':'')+'">'+(d.actualPcs!==null&&d.actualPcs!==undefined?d.actualPcs+' 件':'——')+'</strong></div><div class="mi">到站<strong>'+(d.arrivalDate||'——')+'</strong></div></div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="pb"><div class="pbar"><div class="pfill '+(isI?'red':'')+'" style="width:'+pct+'%"></div></div><div class="pt2">核对完成度 '+pct+'%'+(isI?' · 缺少 '+(d.expectedPcs-d.actualPcs)+' 件':'')+'</div></div>':'')+(d.notes?'<div class="nb '+(isI?'warn':'')+'">备注：'+d.notes+'</div>':'')
     :'<div class="mr" style="margin-top:8px"><div class="mi">应收 <strong>'+(d.expectedPcs||0)+'</strong> 件</div>'+(d.actualPcs!==null&&d.actualPcs!==undefined?'<div class="mi" style="'+(isI?'color:#c0392b':'')+'">实收 <strong>'+d.actualPcs+'</strong> 件</div>':'')+'</div>';
   return '<div class="card"><div class="ct"><div><div class="cn"><i class="ti ti-building-store" style="font-size:13px;margin-right:5px"></i>'+(d.supplier||'—')+'<span class="cid">'+d.id+'</span></div><div class="cs">关联：'+(d.ref||'—')+' · 驿站：'+(d.station||'—')+'</div></div><span class="badge '+bd[0]+'">'+bd[1]+'</span></div>'+detail+act+'</div>';
 }
@@ -616,7 +633,38 @@ function toggleConfirm(id){
 
 function markOk(id){
   var d=data.domestic.find(function(x){return x.id===id;});if(!d)return;
-  d.status='ok';persistDoc('domestic',d);
+  d.status='ok';
+  persistDoc('domestic',d);
+  // Auto-create international record if not exists
+  var existsIntl=data.international.find(function(i){return i.ref===d.ref;});
+  if(!existsIntl){
+    var ni={
+      id:'I'+String(data.international.length+1).padStart(3,'0'),
+      ref:d.ref,
+      forwarder:'',
+      carrier:'',
+      trackingNo:'',
+      origin:'中国',
+      dest:'',
+      shipDate:'',
+      eta:'',
+      status:'pending',
+      notes:'由国内发货记录自动创建'
+    };
+    data.international.push(ni);
+    persistDoc('international',ni);
+    toast('国内收货已确认，已自动创建国际运输记录');
+    setTimeout(function(){
+      document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.page').forEach(function(t){t.classList.remove('active');});
+      document.getElementById('page-international').classList.add('active');
+      document.querySelectorAll('.nav-btn')[3].classList.add('active');
+      renderAll();
+    },1200);
+  } else {
+    toast('已核对');
+    renderAll();
+  }
 }
 
 function inputTracking(id){
@@ -668,6 +716,7 @@ function openModal(type,editId){
     } else if(type==='domestic'){
       h='<div class="fr"><div class="fg"><label class="fl">关联采购单号</label><input id="f-ref" type="text" value="'+(e.ref||'')+'"></div><div class="fg"><label class="fl">供应商</label><input id="f-supplier" type="text" value="'+(e.supplier||'')+'"></div></div>'
         +'<div class="fg"><label class="fl">菜鸟驿站</label><input id="f-station" type="text" value="'+(e.station||'')+'"></div>'
+        +'<div class="fg"><label class="fl">国内物流单号</label><input id="f-dTrackingNo" type="text" placeholder="如：73711790538046" value="'+(e.dTrackingNo||'')+'"></div>'
         +'<div class="fr"><div class="fg"><label class="fl">取件码</label><input id="f-pickupCode" type="text" value="'+(e.pickupCode||'')+'"></div><div class="fg"><label class="fl">到站日期</label><input id="f-arrivalDate" type="date" value="'+(e.arrivalDate||'')+'"></div></div>'
         +'<div class="fr"><div class="fg"><label class="fl">应收件数</label><input id="f-expectedPcs" type="number" value="'+(e.expectedPcs||'')+'"></div><div class="fg"><label class="fl">实收件数</label><input id="f-actualPcs" type="number" value="'+(e.actualPcs!==null&&e.actualPcs!==undefined?e.actualPcs:'')+'"></div></div>'
         +'<div class="fg"><label class="fl">备注</label><textarea id="f-notes">'+(e.notes||'')+'</textarea></div>';
@@ -757,6 +806,8 @@ function saveModal(){
       sz.split(',').forEach(function(s){var p=s.split(':');if(p[0]&&p[1])sizes[p[0].trim()]=parseInt(p[1])||0;});
       var dqty=parseInt(g('f-qty'))||0;
       var qty=Object.keys(sizes).length>0?Object.values(sizes).reduce(function(a,b){return a+b;},0):dqty;
+      // ensure sizes stored as proper object string for Firebase
+      if(typeof sizes==='object')sizes=sizes;
       var obj={product:g('f-product'),client:g('f-client'),supplier:g('f-supplier'),sizes:sizes,color:g('f-color'),qty:qty,directQty:dqty,deadline:g('f-deadline'),notes:g('f-notes'),images:mImgs.slice(),supplierAmount:parseFloat(g('f-sAmt'))||0,supplierPayStatus:document.getElementById('f-sSt').value,supplierReceipts:mSupReceipts.slice(),customerAmount:parseFloat(g('f-cAmt'))||0,customerPayStatus:document.getElementById('f-cSt').value,customerReceipts:mCustReceipts.slice()};
       if(editId){Object.assign(data.purchase.find(function(x){return x.id===editId;}),obj);obj=data.purchase.find(function(x){return x.id===editId;});}
       else{obj.id='P'+String(data.purchase.length+1).padStart(3,'0');obj.status='pending';data.purchase.push(obj);}
@@ -764,7 +815,7 @@ function saveModal(){
     } else if(type==='domestic'){
       var exp=parseInt(g('f-expectedPcs'))||0,ar=g('f-actualPcs'),act=ar!==''?parseInt(ar):null;
       var st=act!==null?(act<exp?'issue':'ok'):'pending';
-      var obj={ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')};
+      var obj={ref:g('f-ref'),supplier:g('f-supplier'),station:g('f-station'),dTrackingNo:g('f-dTrackingNo'),pickupCode:g('f-pickupCode'),arrivalDate:g('f-arrivalDate'),expectedPcs:exp,actualPcs:act,status:st,notes:g('f-notes')};
       if(editId){Object.assign(data.domestic.find(function(x){return x.id===editId;}),obj);obj=data.domestic.find(function(x){return x.id===editId;});}
       else{obj.id='D'+String(data.domestic.length+1).padStart(3,'0');data.domestic.push(obj);}
       persistDoc('domestic',obj);
